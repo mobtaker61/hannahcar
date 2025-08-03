@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\LanguageController;
@@ -16,13 +18,20 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/page/{slug}', [HomeController::class, 'showPage'])->name('page.show');
 
 // Dynamic Page Routes
-/* $pages = Page::where('status', 'published')->get();
-foreach ($pages as $page) {
-    Route::get('/' . $page->slug, function() use ($page) {
-        return app(HomeController::class)->showPage($page->slug);
-    })->name('page.' . $page->slug);
+try {
+    if (Schema::hasTable('pages')) {
+        $pages = Page::where('status', 'published')->get();
+        foreach ($pages as $page) {
+            Route::get('/' . $page->slug, function() use ($page) {
+                return app(HomeController::class)->showPage($page->slug);
+            })->name('page.' . $page->slug);
+        }
+    }
+} catch (\Exception $e) {
+    // Log error or handle gracefully
+    Log::warning('Pages table not found during route loading: ' . $e->getMessage());
 }
- */
+
 // Auth Routes
 require __DIR__.'/auth.php';
 
