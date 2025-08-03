@@ -16,13 +16,13 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/page/{slug}', [HomeController::class, 'showPage'])->name('page.show');
 
 // Dynamic Page Routes
-$pages = Page::where('status', 'published')->get();
+/* $pages = Page::where('status', 'published')->get();
 foreach ($pages as $page) {
     Route::get('/' . $page->slug, function() use ($page) {
         return app(HomeController::class)->showPage($page->slug);
     })->name('page.' . $page->slug);
 }
-
+ */
 // Auth Routes
 require __DIR__.'/auth.php';
 
