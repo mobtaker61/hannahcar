@@ -88,4 +88,4 @@ RewriteRule ^postcss\.config\.js$ - [F,L]
 RewriteRule ^artisan$ - [F,L]
 
 # Prevent access to README.md
-RewriteRule ^README\.md$ - [F,L] 
+RewriteRule ^README\.md$ - [F,L]
