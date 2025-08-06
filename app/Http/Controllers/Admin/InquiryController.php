@@ -106,11 +106,14 @@ class InquiryController extends Controller
     {
         $modal = request('modal');
         if ($type === 'special_car_purchase') {
-            $inquiry = \App\Models\InquirySpecialCarPurchase::with(['user', 'logs.user'])->findOrFail($id);
+            $inquiry = \App\Models\InquirySpecialCarPurchase::with(['user', 'logs.user', 'brand', 'model'])->findOrFail($id);
+
+            // تعریف فیلدهای نمایشی
             $fields = [
                 'برند خودرو' => $inquiry->car_brand,
                 'مدل خودرو' => $inquiry->car_model,
                 'سال ساخت' => $inquiry->car_year,
+                'محل تحویل' => $inquiry->delivery_location,
                 'توضیحات' => $inquiry->description,
             ];
         } elseif ($type === 'special_spare_part') {

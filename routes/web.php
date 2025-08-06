@@ -66,6 +66,20 @@ Route::get('services/{service:slug}', [App\Http\Controllers\ServiceController::c
 Route::get('vehicles', [App\Http\Controllers\VehicleController::class, 'index'])->name('vehicles.index');
 Route::get('vehicles/{vehicle:slug}', [App\Http\Controllers\VehicleController::class, 'show'])->name('vehicles.show');
 
+// AJAX Routes for Vehicle Brands and Models
+Route::get('/api/vehicle-brands', function() {
+    $brands = \App\Models\VehicleBrand::active()->ordered()->get(['id', 'name']);
+    return response()->json($brands);
+})->name('api.vehicle-brands');
+
+Route::get('/api/vehicle-models/{brandId}', function($brandId) {
+    $models = \App\Models\VehicleModel::where('brand_id', $brandId)
+        ->active()
+        ->ordered()
+        ->get(['id', 'name']);
+    return response()->json($models);
+})->name('api.vehicle-models');
+
 // Inquiry Routes - با middleware مناسب
 Route::middleware(['web'])->group(function () {
     // API ثبت فرم خرید خودرو خاص

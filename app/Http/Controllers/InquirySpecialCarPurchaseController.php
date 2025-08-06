@@ -35,7 +35,10 @@ class InquirySpecialCarPurchaseController extends Controller
                 'last_name' => 'nullable|string|max:100',
                 'car_brand' => 'nullable|string|max:100',
                 'car_model' => 'nullable|string|max:100',
-                'car_year' => 'nullable|integer',
+                'car_brand_id' => 'nullable|exists:vehicle_brands,id',
+                'car_model_id' => 'nullable|exists:vehicle_models,id',
+                'car_year' => 'nullable|integer|min:2020|max:2026',
+                'delivery_location' => 'nullable|in:southern_ports,tehran,home_delivery',
                 'description' => 'nullable|string',
             ]);
 
@@ -53,7 +56,10 @@ class InquirySpecialCarPurchaseController extends Controller
                 'last_name' => $request->last_name ?? '',
                 'car_brand' => $request->car_brand,
                 'car_model' => $request->car_model,
+                'car_brand_id' => $request->car_brand_id,
+                'car_model_id' => $request->car_model_id,
                 'car_year' => $request->car_year,
+                'delivery_location' => $request->delivery_location,
                 'description' => $request->description,
                 'status' => 'new',
             ]);
