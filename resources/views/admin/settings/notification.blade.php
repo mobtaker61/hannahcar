@@ -88,6 +88,28 @@
                             </div>
                         </div>
 
+                        <!-- Admin Phone Numbers -->
+                        <div class="bg-purple-50 p-6 rounded-lg">
+                            <h3 class="text-lg font-medium text-purple-900 mb-4">
+                                <i class="fas fa-phone ml-2"></i>
+                                شماره‌های تلفن ادمین برای اعلان‌ها
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="admin_phone_1" class="block text-sm font-medium text-gray-700 mb-2">شماره تلفن ادمین 1</label>
+                                    <input type="text" name="settings[admin_phone_1][value]" id="admin_phone_1" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="{{ old('settings.admin_phone_1.value', $notificationSettings['admin_phone_1'] ?? '') }}" placeholder="+989123456789">
+                                    <input type="hidden" name="settings[admin_phone_1][key]" value="admin_phone_1">
+                                    <p class="text-xs text-gray-500 mt-1">شماره تلفن اول برای ارسال اعلان‌های واتساپ</p>
+                                </div>
+                                <div>
+                                    <label for="admin_phone_2" class="block text-sm font-medium text-gray-700 mb-2">شماره تلفن ادمین 2</label>
+                                    <input type="text" name="settings[admin_phone_2][value]" id="admin_phone_2" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="{{ old('settings.admin_phone_2.value', $notificationSettings['admin_phone_2'] ?? '') }}" placeholder="+989876543210">
+                                    <input type="hidden" name="settings[admin_phone_2][key]" value="admin_phone_2">
+                                    <p class="text-xs text-gray-500 mt-1">شماره تلفن دوم برای ارسال اعلان‌های واتساپ</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Notification Footer -->
                         <div class="bg-gray-100 p-6 rounded-lg">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">

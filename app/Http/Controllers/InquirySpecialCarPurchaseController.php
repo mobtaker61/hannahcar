@@ -59,16 +59,39 @@ class InquirySpecialCarPurchaseController extends Controller
                 'status' => 'new',
             ]);
 
-            // ارسال پیام واتساپ به کاربر
+            // ارسال پیام واتساپ به کاربر و شماره‌های اضافی
             $userName = $user->name;
-            \App\Helpers\NotificationHelper::send('whatsapp', $request->phone,
-                'متقاضی گرامی، ' . $userName . "\n" .
+            $message = 'متقاضی گرامی، ' . $userName . "\n" .
                 'درخواست خرید خودرو خاص شما با موفقیت ثبت شد.' .
                 "\n" .
                 'کد پیگیری: ' . $inquiry->id .
                 "\n" .
-                \App\Helpers\SettingHelper::getNotificationFooter()
-            );
+                \App\Helpers\SettingHelper::getNotificationFooter();
+
+            // ارسال به کاربر
+            \App\Helpers\NotificationHelper::send('whatsapp', $user->phone, $message);
+
+            // ارسال به شماره‌های اضافی
+            $additionalPhones = [
+                \App\Helpers\SettingHelper::get('admin_phone_1', '+989123456789'),
+                \App\Helpers\SettingHelper::get('admin_phone_2', '+989876543210')
+            ];
+
+            $adminMessage = 'درخواست جدید خرید خودرو خاص' . "\n" .
+                'نام متقاضی: ' . $userName . "\n" .
+                'شماره تلفن: ' . $user->phone . "\n" .
+                'کد پیگیری: ' . $inquiry->id . "\n" .
+                'برند: ' . ($request->car_brand ?? '-') . "\n" .
+                'مدل: ' . ($request->car_model ?? '-') . "\n" .
+                'سال: ' . ($request->car_year ?? '-') . "\n" .
+                'محل تحویل: ' . ($request->delivery_location ?? '-') . "\n" .
+                'توضیحات: ' . ($request->description ?? '-');
+
+            foreach ($additionalPhones as $phone) {
+                if (!empty($phone) && $phone !== '+989123456789' && $phone !== '+989876543210') {
+                    \App\Helpers\NotificationHelper::send('whatsapp', $phone, $adminMessage);
+                }
+            }
 
             return response()->json([
                 'success' => true,

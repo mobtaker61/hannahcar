@@ -498,7 +498,7 @@ class SettingController extends Controller
     {
         $languages = Language::active()->get();
         $notificationSettings = Setting::with('translations.language')
-            ->where('group', 'notification')
+            ->whereIn('group', ['notification', 'notifications'])
             ->orderBy('key')
             ->get()
             ->mapWithKeys(function($item) {
@@ -521,12 +521,24 @@ class SettingController extends Controller
 
         foreach ($request->settings as $settingData) {
             $setting = Setting::where('key', $settingData['key'])->first();
-            if ($setting) {
-                $setting->translations()->updateOrCreate(
-                    ['language_id' => app()->getLocale() === 'fa' ? 1 : (app()->getLocale() === 'en' ? 2 : 3)],
-                    ['value' => $settingData['value']]
-                );
+
+            // اگر تنظیم وجود نداشت، آن را ایجاد کن
+            if (!$setting) {
+                $setting = Setting::create([
+                    'key' => $settingData['key'],
+                    'type' => 'text',
+                    'group' => 'notifications',
+                    'description' => '',
+                    'is_public' => false,
+                    'is_active' => true,
+                ]);
             }
+
+            // به‌روزرسانی یا ایجاد ترجمه
+            $setting->translations()->updateOrCreate(
+                ['language_id' => app()->getLocale() === 'fa' ? 1 : (app()->getLocale() === 'en' ? 2 : 3)],
+                ['value' => $settingData['value']]
+            );
         }
 
         return redirect()->route('admin.settings.notification')

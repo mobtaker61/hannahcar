@@ -404,21 +404,90 @@ class SettingSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'key' => 'admin_phone_1',
+                'group' => 'notifications',
+                'type' => 'text',
+                'default_value' => '+989123456789',
+                'sort_order' => 13,
+                'is_active' => true,
+                'is_public' => false,
+                'translations' => [
+                    'fa' => [
+                        'label' => 'شماره تلفن ادمین 1',
+                        'value' => '+989123456789',
+                        'description' => 'شماره تلفن اول برای ارسال اعلان‌های واتساپ',
+                        'help_text' => 'شماره تلفن ادمین اول را وارد کنید',
+                        'is_active' => true,
+                    ],
+                    'en' => [
+                        'label' => 'Admin Phone 1',
+                        'value' => '+989123456789',
+                        'description' => 'First phone number for WhatsApp notifications',
+                        'help_text' => 'Enter the first admin phone number',
+                        'is_active' => true,
+                    ],
+                    'ar' => [
+                        'label' => 'هاتف المدير 1',
+                        'value' => '+989123456789',
+                        'description' => 'رقم الهاتف الأول لإشعارات واتساب',
+                        'help_text' => 'أدخل رقم هاتف المدير الأول',
+                        'is_active' => true,
+                    ],
+                ],
+            ],
+            [
+                'key' => 'admin_phone_2',
+                'group' => 'notifications',
+                'type' => 'text',
+                'default_value' => '+989876543210',
+                'sort_order' => 14,
+                'is_active' => true,
+                'is_public' => false,
+                'translations' => [
+                    'fa' => [
+                        'label' => 'شماره تلفن ادمین 2',
+                        'value' => '+989876543210',
+                        'description' => 'شماره تلفن دوم برای ارسال اعلان‌های واتساپ',
+                        'help_text' => 'شماره تلفن ادمین دوم را وارد کنید',
+                        'is_active' => true,
+                    ],
+                    'en' => [
+                        'label' => 'Admin Phone 2',
+                        'value' => '+989876543210',
+                        'description' => 'Second phone number for WhatsApp notifications',
+                        'help_text' => 'Enter the second admin phone number',
+                        'is_active' => true,
+                    ],
+                    'ar' => [
+                        'label' => 'هاتف المدير 2',
+                        'value' => '+989876543210',
+                        'description' => 'رقم الهاتف الثاني لإشعارات واتساب',
+                        'help_text' => 'أدخل رقم هاتف المدير الثاني',
+                        'is_active' => true,
+                    ],
+                ],
+            ],
         ];
 
         foreach ($settings as $settingData) {
             $translations = $settingData['translations'];
             unset($settingData['translations']);
 
-            $setting = Setting::create($settingData);
+            // Check if setting already exists
+            $setting = Setting::where('key', $settingData['key'])->first();
 
-            foreach ($languages as $language) {
-                if (isset($translations[$language->code])) {
-                    $translationData = $translations[$language->code];
-                    $translationData['language_id'] = $language->id;
-                    $translationData['setting_id'] = $setting->id;
+            if (!$setting) {
+                $setting = Setting::create($settingData);
 
-                    SettingTranslation::create($translationData);
+                foreach ($languages as $language) {
+                    if (isset($translations[$language->code])) {
+                        $translationData = $translations[$language->code];
+                        $translationData['language_id'] = $language->id;
+                        $translationData['setting_id'] = $setting->id;
+
+                        SettingTranslation::create($translationData);
+                    }
                 }
             }
         }
