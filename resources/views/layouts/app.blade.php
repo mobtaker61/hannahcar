@@ -10,10 +10,10 @@
 
     <!-- Favicon -->
     @php
-        $siteFavicon = \App\Helpers\SettingHelper::get('site_favicon');
+        $siteFavicon = \App\Helpers\SettingHelper::getFilePath('site_favicon');
     @endphp
     @if($siteFavicon)
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteFavicon) }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset($siteFavicon) }}">
     @endif
 
     <!-- Meta Tags -->
@@ -127,7 +127,7 @@
                             @endphp
 
                             @if($logoUrl)
-                                <img src="{{ $logoUrl }}"
+                                <img src="{{ asset($logoUrl) }}"
                                     alt="{{ $nameTranslation?->value ?? config('app.name') }}" class="h-8 w-auto me-2">
                             @else
                                 <span class="text-primary text-xl font-bold">{{ $nameTranslation?->value ?? config('app.name') }}</span>

@@ -9,10 +9,10 @@
 
     <!-- Favicon -->
     @php
-        $siteFavicon = \App\Helpers\SettingHelper::get('site_favicon');
+        $siteFavicon = \App\Helpers\SettingHelper::getFilePath('site_favicon');
     @endphp
     @if($siteFavicon)
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteFavicon) }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset($siteFavicon) }}">
     @endif
 
     <!-- Fonts -->
@@ -38,13 +38,13 @@
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
                             <a href="{{ route('admin.dashboard') }}" class="flex items-center">
-                                @php
-                                    $siteLogo = \App\Helpers\SettingHelper::get('site_logo');
+                                                                @php
+                                    $siteLogo = \App\Helpers\SettingHelper::getFilePath('site_logo');
                                     $siteName = \App\Helpers\SettingHelper::get('site_name') ?? config('app.name', 'Laravel');
                                 @endphp
 
                                 @if($siteLogo)
-                                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-8 w-auto me-2">
+                                    <img src="{{ asset($siteLogo) }}" alt="{{ $siteName }}" class="h-8 w-auto me-2">
                                 @else
                                     <span class="text-xl font-bold text-gray-800">{{ $siteName }} - ادمین</span>
                                 @endif

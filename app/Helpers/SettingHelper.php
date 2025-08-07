@@ -106,4 +106,34 @@ class SettingHelper
     {
         return self::get('notification_footer', "\nمنتظر تماس کارشناسان ما باشید\nتلفن تماس: 09123456789\nایمیل: info@hannahcar.ir\nHANNAH CAR");
     }
+
+    /**
+     * Get file path from setting (removes domain if present)
+     */
+    public static function getFilePath($key, $default = null)
+    {
+        $value = self::get($key, $default);
+
+        if (!$value) {
+            return $default;
+        }
+
+        // If it's a full URL, extract the path
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $parsedUrl = parse_url($value);
+            return $parsedUrl['path'] ?? $value;
+        }
+
+        // If it starts with storage/, return as is
+        if (str_starts_with($value, 'storage/')) {
+            return $value;
+        }
+
+        // If it's just a filename, assume it's in storage/uploads/
+        if (!str_contains($value, '/')) {
+            return 'storage/uploads/' . $value;
+        }
+
+        return $value;
+    }
 }
