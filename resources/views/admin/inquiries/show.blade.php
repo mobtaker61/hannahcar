@@ -41,9 +41,8 @@
                     <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">اطلاعات کاربر</h2>
                         <div class="space-y-3">
-                            <div><span class="font-medium">نام و نام خانوادگی:</span> {{ $inquiry->first_name }}
-                                {{ $inquiry->last_name }}</div>
-                            <div><span class="font-medium">شماره تلفن:</span> {{ $inquiry->phone }}</div>
+                            <div><span class="font-medium">نام و نام خانوادگی:</span> {{ $inquiry->user->name ?? ($inquiry->first_name . ' ' . $inquiry->last_name) }}</div>
+                            <div><span class="font-medium">شماره تلفن:</span> {{ $inquiry->user->phone ?? $inquiry->phone }}</div>
                             <div><span class="font-medium">تاریخ ثبت:</span>
                                 {{ $inquiry->created_at->format('Y/m/d H:i') }}</div>
                         </div>

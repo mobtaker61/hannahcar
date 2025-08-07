@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\InquirySpecialCarPurchase;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -30,30 +31,24 @@ class InquirySpecialCarPurchaseController extends Controller
             }
 
             $request->validate([
-                'phone' => 'required|regex:/^\+\d{1,4}\d{7,15}$/',
-                'first_name' => 'nullable|string|max:100',
-                'last_name' => 'nullable|string|max:100',
+                'user_id' => 'required|exists:users,id',
                 'car_brand' => 'nullable|string|max:100',
                 'car_model' => 'nullable|string|max:100',
                 'car_brand_id' => 'nullable|exists:vehicle_brands,id',
                 'car_model_id' => 'nullable|exists:vehicle_models,id',
                 'car_year' => 'nullable|integer|min:2020|max:2026',
-                'delivery_location' => 'nullable|in:southern_ports,tehran,home_delivery',
+                'delivery_location' => 'nullable|string',
                 'description' => 'nullable|string',
             ]);
 
-            // جستجو یا ساخت کاربر بر اساس شماره تلفن
-            $user = \App\Models\User::findOrCreateByPhone(
-                $request->phone,
-                $request->first_name ?? '',
-                $request->last_name ?? ''
-            );
+            // Get user
+            $user = User::findOrFail($request->user_id);
 
             $inquiry = InquirySpecialCarPurchase::create([
                 'user_id' => $user->id,
-                'phone' => $request->phone,
-                'first_name' => $request->first_name ?? $user->name,
-                'last_name' => $request->last_name ?? '',
+                'phone' => $user->phone,
+                'first_name' => $user->name,
+                'last_name' => '',
                 'car_brand' => $request->car_brand,
                 'car_model' => $request->car_model,
                 'car_brand_id' => $request->car_brand_id,

@@ -254,9 +254,6 @@
                             تایید
                         </x-primary-button>
                     </div>
-                    <div class="mt-2 text-sm text-gray-600">
-                        کد تست: <span id="test-code" class="font-bold text-green-600"></span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -301,43 +298,59 @@
     const formType = '{{ $formType }}';
     const formAction = '{{ $formAction }}';
 
+    // Debug: نمایش متغیرهای global
+    console.log('Global variables initialized');
+    console.log('formAction:', formAction);
+
     // Update country code display when country changes
-    document.getElementById('country').addEventListener('change', function() {
-        // No need to update display since we're using a dropdown now
+    document.addEventListener('DOMContentLoaded', function() {
+        const countrySelect = document.getElementById('country');
+        if (countrySelect) {
+            countrySelect.addEventListener('change', function() {
+                // No need to update display since we're using a dropdown now
+                console.log('Country changed to:', this.value);
+            });
+        }
     });
 
         // Handle verification method button clicks
-    document.querySelectorAll('.verification-method-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const method = this.dataset.method;
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.verification-method-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const method = this.dataset.method;
+                    console.log('Button clicked:', method);
 
-            // Remove active class from all buttons
-            document.querySelectorAll('.verification-method-btn').forEach(b => {
-                if (b.dataset.method === 'sms') {
-                    b.classList.remove('active', 'bg-blue-100', 'border-blue-500', 'text-blue-800');
-                    b.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-700');
-                } else if (b.dataset.method === 'whatsapp') {
-                    b.classList.remove('active', 'bg-green-100', 'border-green-500', 'text-green-800');
-                    b.classList.add('bg-green-50', 'border-green-300', 'text-green-700');
-                }
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.verification-method-btn').forEach(b => {
+                        if (b.dataset.method === 'sms') {
+                            b.classList.remove('active', 'bg-blue-100', 'border-blue-500', 'text-blue-800');
+                            b.classList.add('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                        } else if (b.dataset.method === 'whatsapp') {
+                            b.classList.remove('active', 'bg-green-100', 'border-green-500', 'text-green-800');
+                            b.classList.add('bg-green-50', 'border-green-300', 'text-green-700');
+                        }
+                    });
+
+                    // Add active class to clicked button
+                    if (method === 'sms') {
+                        this.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-700');
+                        this.classList.add('active', 'bg-blue-100', 'border-blue-500', 'text-blue-800');
+                    } else if (method === 'whatsapp') {
+                        this.classList.remove('bg-green-50', 'border-green-300', 'text-green-700');
+                        this.classList.add('active', 'bg-green-100', 'border-green-500', 'text-green-800');
+                    }
+
+                    // Update hidden input
+                    const verificationMethodInput = document.getElementById('verification_method');
+                    if (verificationMethodInput) {
+                        verificationMethodInput.value = method;
+                    }
+
+                    // Send verification code immediately
+                    sendVerificationCode(method);
+                });
             });
-
-            // Add active class to clicked button
-            if (method === 'sms') {
-                this.classList.remove('bg-blue-50', 'border-blue-300', 'text-blue-700');
-                this.classList.add('active', 'bg-blue-100', 'border-blue-500', 'text-blue-800');
-            } else if (method === 'whatsapp') {
-                this.classList.remove('bg-green-50', 'border-green-300', 'text-green-700');
-                this.classList.add('active', 'bg-green-100', 'border-green-500', 'text-green-800');
-            }
-
-            // Update hidden input
-            document.getElementById('verification_method').value = method;
-
-            // Send verification code immediately
-            sendVerificationCode(method);
         });
-    });
 
     // Function to send verification code
     function sendVerificationCode(method) {
@@ -371,10 +384,10 @@
         .then(data => {
             if (data.success) {
                 document.getElementById('verify-code-section').classList.remove('hidden');
-                document.getElementById('test-code').textContent = data.verify_code;
                 document.getElementById('phone').disabled = true;
                 document.getElementById('country').disabled = true;
 
+                console.log('Verification code:' + data.verify_code);
                 // Show success message (removed alert)
                 const methodText = method === 'sms' ? 'SMS' : 'WhatsApp';
             } else {
@@ -398,29 +411,42 @@
         });
     }
 
-    // بررسی لاگین بودن کاربر در ابتدای صفحه
-    @if(auth()->check())
-        // کاربر لاگین کرده، اطلاعات را پر کن و فرم را نمایش بده
-        verifiedPhone = '{{ auth()->user()->phone }}';
-        verifiedUser = {
-            name: '{{ auth()->user()->name }}',
-            phone: '{{ auth()->user()->phone }}'
-        };
-        document.getElementById('user-name').textContent = verifiedUser.name;
-        document.getElementById('user-phone').textContent = verifiedUser.phone;
-        document.getElementById('user-info-section').classList.remove('hidden');
-        document.getElementById('dynamic-form-container').classList.remove('hidden');
-        document.getElementById('phone-verify-section').classList.add('hidden');
-        // اگر کاربر قبلاً ثبت‌نام کرده، فیلدهای نام را مخفی کن
-        const nameFields = document.getElementById('name-fields');
-        if (nameFields) {
-            nameFields.classList.add('hidden');
-        }
-    @endif
+                // بررسی لاگین بودن کاربر در ابتدای صفحه
+        @if(auth()->check())
+            // کاربر لاگین کرده، اطلاعات را پر کن و فرم را نمایش بده
+            verifiedPhone = '{{ auth()->user()->phone }}';
+            verifiedUser = {
+                id: {{ auth()->user()->id }},
+                name: '{{ auth()->user()->name }}',
+                phone: '{{ auth()->user()->phone }}'
+            };
+
+            // نمایش اطلاعات کاربر بعد از بارگذاری DOM
+            document.addEventListener('DOMContentLoaded', function() {
+                const userNameElement = document.getElementById('user-name');
+                const userPhoneElement = document.getElementById('user-phone');
+                const userInfoSection = document.getElementById('user-info-section');
+                const dynamicFormContainer = document.getElementById('dynamic-form-container');
+                const phoneVerifySection = document.getElementById('phone-verify-section');
+
+                if (userNameElement) userNameElement.textContent = verifiedUser.name;
+                if (userPhoneElement) userPhoneElement.textContent = verifiedUser.phone;
+                if (userInfoSection) userInfoSection.classList.remove('hidden');
+                if (dynamicFormContainer) dynamicFormContainer.classList.remove('hidden');
+                if (phoneVerifySection) phoneVerifySection.classList.add('hidden');
+
+                console.log('User is logged in:', verifiedUser);
+            });
+        @endif
 
     // Prevent form submission (buttons handle it now)
-    document.getElementById('phone-verify-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneVerifyForm = document.getElementById('phone-verify-form');
+        if (phoneVerifyForm) {
+            phoneVerifyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+        }
     });
 
     // Verify code
@@ -453,19 +479,15 @@
                     body: JSON.stringify({ phone: fullPhone })
                 });
             } else {
-                // کاربر جدید است - نمایش فرم نام و نام خانوادگی
-                verifiedUser = { name: '', phone: fullPhone };
-                document.getElementById('user-name').textContent = 'کاربر جدید';
-                document.getElementById('user-phone').textContent = fullPhone;
-                document.getElementById('user-info-section').classList.remove('hidden');
-                document.getElementById('dynamic-form-container').classList.remove('hidden');
-                document.getElementById('phone-verify-section').classList.add('hidden');
-                // نمایش فیلدهای نام و نام خانوادگی
-                const nameFields = document.getElementById('name-fields');
-                if (nameFields) {
-                    nameFields.classList.remove('hidden');
-                }
-                return Promise.resolve({ success: true, isNewUser: true });
+                // کاربر جدید است - ابتدا ثبت نام کن
+                return fetch("{{ route('inquiries.register_user') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ phone: fullPhone, first_name: 'کاربر', last_name: 'جدید' })
+                });
             }
         })
         .then(res => {
@@ -475,87 +497,32 @@
             return res;
         })
         .then(data => {
-            if (data.success && !data.isNewUser) {
-                // کاربر قبلاً ثبت‌نام کرده و لاگین شد
-                verifiedUser = { name: 'کاربر ثبت‌نام شده', phone: fullPhone };
+            if (data.success) {
+                // کاربر لاگین شد
+                verifiedUser = {
+                    id: data.user_id,
+                    name: data.user_name || 'کاربر ثبت‌نام شده',
+                    phone: fullPhone
+                };
                 document.getElementById('user-name').textContent = verifiedUser.name;
                 document.getElementById('user-phone').textContent = verifiedUser.phone;
                 document.getElementById('user-info-section').classList.remove('hidden');
                 document.getElementById('dynamic-form-container').classList.remove('hidden');
                 document.getElementById('phone-verify-section').classList.add('hidden');
-                // مخفی کردن فیلدهای نام و نام خانوادگی
-                const nameFields = document.getElementById('name-fields');
-                if (nameFields) {
-                    nameFields.classList.add('hidden');
-                }
             }
         });
     }
 
     // Global function to submit form
     window.submitInquiryForm = function(formData) {
-        // اگر کاربر جدید است و فیلدهای نام پر شده، ابتدا ثبت نام کن
-        const nameFields = document.getElementById('name-fields');
-        if (nameFields && !nameFields.classList.contains('hidden')) {
-            const firstName = document.getElementById('form_first_name').value.trim();
-            const lastName = document.getElementById('form_last_name').value.trim();
-            const phone = document.getElementById('form_phone').value.trim();
-
-            if (!firstName || !lastName || !phone) {
-                alert('لطفاً نام، نام خانوادگی و شماره تلفن را وارد کنید');
-                return Promise.reject('validation.required');
-            }
-            // ابتدا کاربر را ثبت نام کن
-            return fetch("{{ route('inquiries.register_user') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ phone: phone, first_name: firstName, last_name: lastName })
-            })
-            .then(async res => {
-                if (!res.ok) {
-                    let err = await res.json().catch(() => ({}));
-                    throw err;
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // سپس لاگین کن
-                    return fetch("{{ route('inquiries.login_user') }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify({ phone: phone })
-                    });
-                } else {
-                    throw new Error(data.message || 'خطا در ثبت نام');
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    // حالا فرم اصلی را ارسال کن
-                    return submitFormData(formData);
-                } else {
-                    throw new Error(data.message || 'خطا در ورود');
-                }
-            })
-            .catch(error => {
-                if (error && error.errors) {
-                    alert(Object.values(error.errors).flat().join('\n'));
-                } else {
-                    alert('خطا در ارسال فرم: ' + (error.message || error));
-                }
-            });
-        } else {
-            // کاربر قبلاً ثبت‌نام کرده، مستقیماً فرم را ارسال کن
-            return submitFormData(formData);
+        // اطمینان از وجود user_id
+        if (!verifiedUser || !verifiedUser.id) {
+            alert('لطفاً ابتدا شماره تلفن خود را تایید کنید');
+            return Promise.reject('user_not_verified');
         }
+
+        // مستقیماً فرم را ارسال کن
+        return submitFormData(formData);
     };
 
     // تابع جداگانه برای ارسال فرم
@@ -563,26 +530,53 @@
         // تبدیل FormData به object
         const formDataObj = {};
         for (let [key, value] of formData.entries()) {
-            formDataObj[key] = value;
+            // حذف فیلدهای خالی و تبدیل اعداد
+            if (value !== '' && value !== null && value !== undefined) {
+                // تبدیل فیلدهای عددی
+                if (key === 'car_brand_id' || key === 'car_model_id' || key === 'car_year') {
+                    const numValue = parseInt(value);
+                    if (!isNaN(numValue)) {
+                        formDataObj[key] = numValue;
+                    } else {
+                        formDataObj[key] = value;
+                    }
+                } else {
+                    formDataObj[key] = value;
+                }
+            }
         }
+
+        // Debug: نمایش داده‌های ارسالی
+        console.log('Form data being sent:', formDataObj);
+        console.log('Form action:', formAction);
+        console.log('JSON stringified:', JSON.stringify(formDataObj));
+        console.log('Phone value:', formDataObj.phone);
+        console.log('Delivery location:', formDataObj.delivery_location);
 
         return fetch(formAction, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
             },
             body: JSON.stringify(formDataObj)
         })
-        .then(res => {
+        .then(async res => {
             console.log('Response status:', res.status);
             console.log('Response headers:', res.headers);
 
             if (!res.ok) {
-                return res.text().then(text => {
-                    console.log('Error response body:', text);
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                });
+                const errorText = await res.text();
+                console.log('Error response body:', errorText);
+
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    console.log('Parsed error:', errorJson);
+                    throw new Error(`HTTP error! status: ${res.status}, message: ${errorJson.message || 'Unknown error'}`);
+                } catch (e) {
+                    throw new Error(`HTTP error! status: ${res.status}, body: ${errorText}`);
+                }
             }
             return res.json();
         })

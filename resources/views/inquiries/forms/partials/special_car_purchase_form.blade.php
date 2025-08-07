@@ -5,19 +5,7 @@
 >
     <form id="car-purchase-form" method="POST" class="space-y-6">
         @csrf
-        <input type="hidden" name="phone" id="form_phone">
-
-        <!-- Name fields for new users -->
-        <div id="name-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <x-input-label for="form_first_name" value="نام" />
-                <x-text-input id="form_first_name" name="first_name" type="text" class="mt-1 block w-full" />
-            </div>
-            <div>
-                <x-input-label for="form_last_name" value="نام خانوادگی" />
-                <x-text-input id="form_last_name" name="last_name" type="text" class="mt-1 block w-full" />
-            </div>
-        </div>
+        <input type="hidden" name="user_id" id="form_user_id">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -73,9 +61,9 @@
     </form>
 
     <script>
-        // Set phone value when form is shown
-        if (typeof verifiedPhone !== 'undefined') {
-            document.getElementById('form_phone').value = verifiedPhone;
+        // Set user_id when form is shown
+        if (typeof verifiedUser !== 'undefined' && verifiedUser && verifiedUser.id) {
+            document.getElementById('form_user_id').value = verifiedUser.id;
         }
 
         // Brand search functionality
@@ -189,12 +177,18 @@
             }
         });
 
-        // Handle form submission
+                // Handle form submission
         document.getElementById('car-purchase-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            // اطمینان از مقداردهی input مخفی phone
-            document.getElementById('form_phone').value = verifiedPhone || document.getElementById('phone').value;
-            console.log('form_phone value:', document.getElementById('form_phone').value);
+
+            // اطمینان از مقداردهی input مخفی user_id
+            if (verifiedUser && verifiedUser.id) {
+                document.getElementById('form_user_id').value = verifiedUser.id;
+            }
+
+            console.log('form_user_id value:', document.getElementById('form_user_id').value);
+            console.log('verifiedUser:', verifiedUser);
+
             const formData = new FormData(this);
             window.submitInquiryForm(formData);
         });
