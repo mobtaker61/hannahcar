@@ -23,7 +23,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
         <!-- Navigation -->
-        <nav class="bg-white border-b border-gray-100">
+        <nav class="bg-secondary border-b border-gray-100 ">
             <div class="mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'flex-row' : 'flex-row-reverse' }} justify-between h-16">
                     <div class="flex">
@@ -51,12 +51,12 @@
                                 <div class="text-xs text-gray-400">{{ Auth::user()->email }}</div>
                             </div>
                             <div class="ml-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <svg class="fill-current h-4 w-4 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </button>
-                        <div class="absolute left-0 right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50 hidden" id="user-menu-dropdown" style="min-width: 180px; right: 0; left: auto;">
+                        <div class="absolute mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50" id="user-menu-dropdown" style="min-width: 180px; right: 0; top: 100%; display: none;">
                             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user ml-2"></i>داشبورد</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -329,19 +329,47 @@
                     });
             });
 
-            // User menu dropdown (فقط با کلیک)
+                        // User menu dropdown
             const userMenuBtn = document.getElementById('user-menu-button');
             const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+            console.log('User menu button:', userMenuBtn);
+            console.log('User menu dropdown:', userMenuDropdown);
+
             if (userMenuBtn && userMenuDropdown) {
                 userMenuBtn.addEventListener('click', function(e) {
+                    console.log('Button clicked!');
+                    e.preventDefault();
                     e.stopPropagation();
-                    userMenuDropdown.classList.toggle('hidden');
-                });
-                document.addEventListener('click', function(e) {
-                    if (!userMenuDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
-                        userMenuDropdown.classList.add('hidden');
+
+                    const isHidden = userMenuDropdown.style.display === 'none';
+                    console.log('Dropdown is hidden:', isHidden);
+
+                    if (isHidden) {
+                        userMenuDropdown.style.display = 'block';
+                    } else {
+                        userMenuDropdown.style.display = 'none';
+                    }
+
+                    // Add visual feedback
+                    const chevron = this.querySelector('svg');
+                    if (chevron) {
+                        chevron.style.transform = userMenuDropdown.style.display === 'none' ? 'rotate(0deg)' : 'rotate(180deg)';
                     }
                 });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
+                        userMenuDropdown.style.display = 'none';
+                        const chevron = userMenuBtn.querySelector('svg');
+                        if (chevron) {
+                            chevron.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+            } else {
+                console.error('User menu elements not found!');
             }
         });
     </script>

@@ -60,6 +60,8 @@
         </div>
     </form>
 
+    <!-- TODO: Add a form to show the related product to the inquiry based on user selected Brand and Model  -->
+
     <script>
         // Set user_id when form is shown
         if (typeof verifiedUser !== 'undefined' && verifiedUser && verifiedUser.id) {
