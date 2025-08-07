@@ -8,6 +8,14 @@
 
     <title>{{ $siteSettings['site_name']->translations->first()?->value ?? config('app.name') }}</title>
 
+    <!-- Favicon -->
+    @php
+        $siteFavicon = \App\Helpers\SettingHelper::get('site_favicon');
+    @endphp
+    @if($siteFavicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+
     <!-- Meta Tags -->
     <meta name="description" content="{{ $siteSettings['site_description']->translations->first()?->value ?? '' }}">
     <meta name="keywords" content="{{ $siteSettings['site_keywords']->translations->first()?->value ?? '' }}">
@@ -117,13 +125,12 @@
                                     $nameTranslation = $siteSettings['site_name']->translations->first();
                                 }
                             @endphp
-                            @if ($logoUrl)
+
+                            @if($logoUrl)
                                 <img src="{{ $logoUrl }}"
                                     alt="{{ $nameTranslation?->value ?? config('app.name') }}" class="h-8 w-auto me-2">
-                            @endif
-                            @if (!$logoUrl || $nameTranslation?->value)
-                                <span
-                                    class="text-primary text-xl font-bold">{{ $nameTranslation?->value ?? config('app.name') }}</span>
+                            @else
+                                <span class="text-primary text-xl font-bold">{{ $nameTranslation?->value ?? config('app.name') }}</span>
                             @endif
                         </a>
                     </div>

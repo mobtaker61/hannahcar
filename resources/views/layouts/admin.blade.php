@@ -7,6 +7,14 @@
 
     <title>{{ config('app.name', 'Laravel') }} - ادمین</title>
 
+    <!-- Favicon -->
+    @php
+        $siteFavicon = \App\Helpers\SettingHelper::get('site_favicon');
+    @endphp
+    @if($siteFavicon)
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . $siteFavicon) }}">
+    @endif
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -29,8 +37,17 @@
                     <div class="flex">
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-gray-800">
-                                {{ config('app.name', 'Laravel') }} - ادمین
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center">
+                                @php
+                                    $siteLogo = \App\Helpers\SettingHelper::get('site_logo');
+                                    $siteName = \App\Helpers\SettingHelper::get('site_name') ?? config('app.name', 'Laravel');
+                                @endphp
+
+                                @if($siteLogo)
+                                    <img src="{{ asset('storage/' . $siteLogo) }}" alt="{{ $siteName }}" class="h-8 w-auto me-2">
+                                @else
+                                    <span class="text-xl font-bold text-gray-800">{{ $siteName }} - ادمین</span>
+                                @endif
                             </a>
                         </div>
 
