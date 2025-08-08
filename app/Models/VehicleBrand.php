@@ -18,10 +18,14 @@ class VehicleBrand extends Model
         'website',
         'is_active',
         'sort_order',
+        'models_completed',
+        'models_updated_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'models_completed' => 'boolean',
+        'models_updated_at' => 'datetime',
     ];
 
     // Relationships
