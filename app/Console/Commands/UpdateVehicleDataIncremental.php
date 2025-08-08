@@ -355,14 +355,14 @@ class UpdateVehicleDataIncremental extends Command
                 }
 
                 $name = trim($modelData['Model_Name']);
-                $slug = Str::slug($name);
+                $baseSlug = Str::slug($name);
 
-                // بررسی وجود مدل با همین نام یا slug در این برند
+                // تولید slug یکتا
+                $slug = $this->generateUniqueSlug($baseSlug, $brand->id);
+
+                // بررسی وجود مدل با همین نام در این برند
                 $existingModel = \App\Models\VehicleModel::where('brand_id', $brand->id)
-                    ->where(function($query) use ($name, $slug) {
-                        $query->where('name', $name)
-                              ->orWhere('slug', $slug);
-                    })
+                    ->where('name', $name)
                     ->first();
 
                 if ($existingModel) {
@@ -376,15 +376,33 @@ class UpdateVehicleDataIncremental extends Command
                     $updated++;
                 } else {
                     // اضافه کردن مدل جدید
-                    \App\Models\VehicleModel::create([
-                        'brand_id' => $brand->id,
-                        'name' => $name,
-                        'slug' => $slug,
-                        'is_active' => true,
-                        'sort_order' => 0,
-                        'description' => "مدل {$name} از برند {$brand->name}"
-                    ]);
-                    $added++;
+                    try {
+                        \App\Models\VehicleModel::create([
+                            'brand_id' => $brand->id,
+                            'name' => $name,
+                            'slug' => $slug,
+                            'is_active' => true,
+                            'sort_order' => 0,
+                            'description' => "مدل {$name} از برند {$brand->name}"
+                        ]);
+                        $added++;
+                    } catch (\Illuminate\Database\QueryException $e) {
+                        // اگر هنوز خطای duplicate entry داشتیم، slug جدید تولید کنیم
+                        if ($e->getCode() == 23000 && str_contains($e->getMessage(), 'Duplicate entry')) {
+                            $slug = $this->generateUniqueSlug($baseSlug, $brand->id, true);
+                            \App\Models\VehicleModel::create([
+                                'brand_id' => $brand->id,
+                                'name' => $name,
+                                'slug' => $slug,
+                                'is_active' => true,
+                                'sort_order' => 0,
+                                'description' => "مدل {$name} از برند {$brand->name}"
+                            ]);
+                            $added++;
+                        } else {
+                            throw $e;
+                        }
+                    }
                 }
             }
 
@@ -418,6 +436,29 @@ class UpdateVehicleDataIncremental extends Command
                 'message' => "خطا در پردازش مدل‌های برند {$brand->name}: " . $e->getMessage()
             ];
         }
+    }
+
+    /**
+     * تولید slug یکتا برای مدل
+     */
+    private function generateUniqueSlug($baseSlug, $brandId, $forceUnique = false)
+    {
+        $slug = $baseSlug;
+        $counter = 1;
+
+        // اگر forceUnique باشد، از ابتدا با شماره شروع کنیم
+        if ($forceUnique) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // بررسی وجود slug در کل جدول
+        while (\App\Models\VehicleModel::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     /**
