@@ -3,43 +3,108 @@
         اخبار و مقالات
     </x-slot>
 
+    <style>
+        /* Line clamp utility classes */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Featured articles hover effects */
+        .group:hover .group-hover\:scale-110 {
+            transform: scale(1.1);
+        }
+
+        /* Backdrop blur fallback for older browsers */
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Custom animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .group:hover .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out;
+        }
+    </style>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <!-- Featured Articles -->
+                                        <!-- Featured Articles -->
                     @if($featuredArticles->count() > 0)
-                        <div class="mb-8">
-                            <h2 class="text-xl font-semibold text-gray-900 mb-4">مقالات ویژه</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                @foreach($featuredArticles as $article)
-                                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                                        @if($article->featured_image)
-                                            <img src="{{ asset('storage/' . $article->featured_image) }}"
-                                                 class="w-full h-48 object-cover" alt="{{ $article->title }}">
-                                        @endif
-                                        <div class="p-4">
-                                            @if($article->category)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mb-2">
-                                                    {{ $article->category->name }}
-                                                </span>
-                                            @endif
-                                            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $article->title }}</h3>
-                                            @if($article->excerpt)
-                                                <p class="text-gray-600 text-sm mb-3">{{ $article->excerpt }}</p>
-                                            @endif
-                                            <div class="flex justify-between items-center">
-                                                <span class="text-sm text-gray-500">
-                                                    <i class="fas fa-calendar ml-1"></i>
-                                                    {{ $article->published_at->format('Y/m/d') }}
-                                                </span>
-                                                <a href="{{ route('news.show', $article->slug) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                                    ادامه مطلب
-                                                </a>
-                                            </div>
+                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-8">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+                                        <i class="fas fa-star text-yellow-500 mr-3"></i>
+                                        مقالات ویژه
+                                    </h2>
+                                    <div class="h-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full w-16"></div>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex space-x-4 space-x-reverse">
+                                    @foreach($featuredArticles->take(4) as $article)
+                                        <div class="flex-1 group relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                            <a href="{{ route('news.show', $article->slug) }}" class="block relative h-48">
+                                                @if($article->featured_image)
+                                                    <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                         alt="{{ $article->title }}">
+                                                @else
+                                                    <div class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                                                        <i class="fas fa-newspaper text-white text-3xl opacity-50"></i>
+                                                    </div>
+                                                @endif
+
+                                                <!-- Gradient Overlay -->
+                                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300"></div>
+
+                                                <!-- Category Badge -->
+                                                @if($article->category)
+                                                    <div class="absolute top-3 right-3 z-10">
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-white/90 text-gray-800">
+                                                            {{ $article->category->name }}
+                                                        </span>
+                                                    </div>
+                                                @endif
+
+                                                <!-- Content Overlay -->
+                                                <div class="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                                                    <!-- Title -->
+                                                    <h3 class="text-sm font-bold mb-2 line-clamp-2 group-hover:text-yellow-300 transition-colors duration-300">
+                                                        {{ $article->title }}
+                                                    </h3>
+
+                                                    <!-- Meta Info -->
+                                                    <div class="flex items-center justify-between text-xs opacity-90">
+                                                        <span class="flex items-center">
+                                                            <i class="fas fa-calendar mr-1"></i>
+                                                            {{ $article->published_at->format('m/d') }}
+                                                        </span>
+                                                        <span class="flex items-center">
+                                                            <i class="fas fa-eye mr-1"></i>
+                                                            {{ $article->views_count }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </a>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     @endif

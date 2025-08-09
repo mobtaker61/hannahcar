@@ -4,13 +4,13 @@
             <!-- Header -->
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-bold text-primary mb-4">{{ __('Our Services') }}</h1>
-                <p class="text-xl text-secondary-text max-w-3xl mx-auto">
+                <p class="text-xl text-secondary-text max-w-3xl mx-auto hidden">
                     {{ __('We provide comprehensive automotive services including vehicle supply, import, clearance, spare parts, and inspection services.') }}
                 </p>
             </div>
 
             <!-- Search and Filter -->
-            <div class="mb-8">
+            <div class="mb-8 hidden">
                 <form method="GET" action="{{ route('services.index') }}" class="flex flex-col md:flex-row gap-4">
                     <div class="flex-1">
                         <input type="text" name="search" value="{{ request('search') }}"
@@ -101,33 +101,41 @@
 
                 <!-- Sidebar -->
                 <div class="lg:col-span-1">
-                    <!-- Featured Services -->
-                    @if($featuredServices->count() > 0)
+                    <!-- Inquiry Forms -->
+                    @if($inquiryForms->count() > 0)
                         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-                            <h3 class="text-lg font-semibold text-primary mb-4">{{ __('Featured Services') }}</h3>
+                            <h3 class="text-lg font-semibold text-primary mb-4">{{ __('Inquiry Forms') }}</h3>
                             <div class="space-y-4">
-                                @foreach($featuredServices as $featuredService)
-                                    @php
-                                        $translation = $featuredService->translations->where('language.code', app()->getLocale())->first();
-                                        if (!$translation) {
-                                            $translation = $featuredService->translations->first();
-                                        }
-                                    @endphp
-
-                                    <a href="{{ route('services.show', $featuredService->slug) }}"
+                                @foreach($inquiryForms as $form)
+                                    <a href="{{ route('inquiry-forms.show', $form->slug) }}"
                                        class="block group">
-                                        <div class="flex items-center space-x-3 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }}">
-                                            <div class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden">
-                                                <img src="{{ $featuredService->featured_image ? asset('storage/' . $featuredService->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $translation->title }}"
-                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                                        <div class="flex items-center space-x-3 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }} p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors duration-300">
+                                            <div class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-{{ $form->color }}-100 flex items-center justify-center">
+                                                @if($form->icon)
+                                                    @switch($form->icon)
+                                                        @case('car')
+                                                            <i class="fas fa-car text-{{ $form->color }}-600 text-lg"></i>
+                                                            @break
+                                                        @case('cog')
+                                                            <i class="fas fa-cog text-{{ $form->color }}-600 text-lg"></i>
+                                                            @break
+                                                        @case('vin-check')
+                                                            <i class="fas fa-search text-{{ $form->color }}-600 text-lg"></i>
+                                                            @break
+                                                        @default
+                                                            <i class="fas fa-file-alt text-{{ $form->color }}-600 text-lg"></i>
+                                                    @endswitch
+                                                @else
+                                                    <i class="fas fa-file-alt text-{{ $form->color }}-600 text-lg"></i>
+                                                @endif
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <h4 class="text-sm font-medium text-primary group-hover:text-accent transition-colors line-clamp-2">
-                                                    {{ $translation->title }}
+                                                    {{ $form->title }}
                                                 </h4>
-                                                <p class="text-xs text-secondary-text line-clamp-2">
-                                                    {{ $translation->excerpt }}
-                                                </p>
+                                            </div>
+                                            <div class="flex-shrink-0">
+                                                <i class="fas fa-arrow-{{ app()->getLocale() === 'fa' ? 'left' : 'right' }} text-gray-400 group-hover:text-accent transition-colors text-sm"></i>
                                             </div>
                                         </div>
                                     </a>

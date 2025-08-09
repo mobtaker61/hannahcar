@@ -5,36 +5,193 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <form method="POST" action="{{ route('admin.articles.store') }}" enctype="multipart/form-data">
-                        @csrf
+            <form method="POST" action="{{ route('admin.articles.store') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6">
 
-                        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                            <!-- Main Content -->
-                            <div class="lg:col-span-3">
-                                <!-- Basic Information -->
+                                <!-- Translations with Tabs -->
                                 <div class="mb-8">
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">اطلاعات اصلی</h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">ترجمه‌ها</h3>
+
+                                    @error('translations')
+                                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+
+                                    <!-- Tab Navigation -->
+                                    <div class="border-b border-gray-200 mb-6">
+                                        <nav class="-mb-px flex space-x-8 space-x-reverse" aria-label="Tabs">
+                                            @foreach ($languages as $index => $language)
+                                                <button type="button" onclick="switchTab('{{ $language->code }}')"
+                                                    id="tab-{{ $language->code }}"
+                                                    class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200
+                                                               {{ $index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                                                    <span
+                                                        class="w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-sm font-bold ml-2 inline-block">
+                                                        {{ strtoupper($language->code) }}
+                                                    </span>
+                                                    {{ $language->native_name }}
+                                                </button>
+                                            @endforeach
+                                        </nav>
+                                    </div>
+
+                                    <!-- Tab Content -->
+                                    @foreach ($languages as $index => $language)
+                                        <div id="content-{{ $language->code }}"
+                                            class="tab-content {{ $index === 0 ? 'block' : 'hidden' }} bg-gray-50 rounded-lg p-6">
+
+                                            <input type="hidden"
+                                                name="translations[{{ $index }}][language_id]"
+                                                value="{{ $language->id }}">
+
+                                            <div class="space-y-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        عنوان
+                                                    </label>
+                                                    <input type="text"
+                                                        name="translations[{{ $index }}][title]"
+                                                        value="{{ old("translations.{$index}.title") }}"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                        onkeyup="handleTitleChange(this, '{{ $language->code }}', {{ $index }})"
+                                                        placeholder="عنوان {{ $language->native_name }}">
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        خلاصه
+                                                    </label>
+                                                    <textarea name="translations[{{ $index }}][excerpt]" rows="3"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ old("translations.{$index}.excerpt") }}</textarea>
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        محتوای اصلی
+                                                    </label>
+                                                    <textarea name="translations[{{ $index }}][content]"
+                                                        id="content_editor_{{ $language->code }}_{{ $index }}" rows="10"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ckeditor">{{ old("translations.{$index}.content") }}</textarea>
+                                                </div>
+
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                            Meta Title
+                                                        </label>
+                                                        <input type="text"
+                                                            name="translations[{{ $index }}][meta_title]"
+                                                            value="{{ old("translations.{$index}.meta_title") }}"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                            Meta Description
+                                                        </label>
+                                                        <textarea name="translations[{{ $index }}][meta_description]" rows="3"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ old("translations.{$index}.meta_description") }}</textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                            نام نویسنده
+                                                        </label>
+                                                        <input type="text"
+                                                            name="translations[{{ $index }}][author_name]"
+                                                            value="{{ old("translations.{$index}.author_name") }}"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                            منبع
+                                                        </label>
+                                                        <input type="url"
+                                                            name="translations[{{ $index }}][source_url]"
+                                                            value="{{ old("translations.{$index}.source_url") }}"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                    </div>
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                        تگ‌ها (جدا شده با کاما)
+                                                    </label>
+                                                    <input type="text"
+                                                        name="translations[{{ $index }}][tags]"
+                                                        value="{{ old("translations.{$index}.tags") }}"
+                                                        placeholder="خودرو, برقی, 2024"
+                                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div class="p-6">
+                                <!-- Actions -->
+                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
+                                    <div class="px-4 py-3 border-b border-gray-200">
+                                        <h5 class="text-lg font-medium text-gray-900">عملیات</h5>
+                                    </div>
+                                    <div class="p-4">
+                                        <div class="space-y-3">
+                                            <button type="submit"
+                                                class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                                                <i class="fas fa-save mr-2"></i>
+                                                ذخیره مقاله
+                                            </button>
+                                            <a href="{{ route('admin.articles.index') }}"
+                                                class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition duration-300 block text-center">
+                                                <i class="fas fa-arrow-left mr-2"></i>
+                                                بازگشت
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Basic Information -->
+                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
+                                    <div class="px-4 py-3 border-b border-gray-200">
+                                        <h5 class="text-lg font-medium text-gray-900">اطلاعات اصلی</h5>
+                                    </div>
+                                    <div class="p-4 space-y-4">
+                                        <!-- Slug -->
                                         <div>
                                             <label for="slug" class="block text-sm font-medium text-gray-700 mb-2">
-                                                Slug <span class="text-red-500">*</span>
+                                                Slug
                                             </label>
-                                            <input type="text" name="slug" id="slug" value="{{ old('slug') }}"
-                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                   required>
+                                            <input type="text" name="slug" id="slug"
+                                                value="{{ old('slug') }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                                placeholder="خودکار تولید می‌شود">
+                                            <p class="mt-1 text-xs text-gray-500">از عنوان اولین زبان تولید می‌شود</p>
                                             @error('slug')
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
+
+                                        <!-- Type -->
                                         <div>
                                             <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
                                                 نوع <span class="text-red-500">*</span>
                                             </label>
                                             <select name="type" id="type"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                    required>
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                                required>
                                                 <option value="article" {{ old('type') == 'article' ? 'selected' : '' }}>
                                                     مقاله
                                                 </option>
@@ -46,19 +203,17 @@
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
-                                    </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                                        <!-- Category -->
                                         <div>
                                             <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
                                                 دسته‌بندی
                                             </label>
                                             <select name="category_id" id="category_id"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                                                 <option value="">انتخاب کنید</option>
                                                 @foreach ($categories as $category)
-                                                    <option value="{{ $category->id }}"
-                                                            {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                                         {{ $category->name }}
                                                     </option>
                                                 @endforeach
@@ -67,28 +222,29 @@
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
+
+                                        <!-- Icon -->
                                         <div>
                                             <label for="icon" class="block text-sm font-medium text-gray-700 mb-2">
                                                 آیکون (FontAwesome)
                                             </label>
-                                            <input type="text" name="icon" id="icon" value="{{ old('icon') }}"
-                                                   placeholder="مثال: fas fa-car"
-                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <input type="text" name="icon" id="icon"
+                                                value="{{ old('icon') }}" placeholder="مثال: fas fa-car"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                                             <p class="mt-1 text-xs text-gray-500">کلاس آیکون FontAwesome (اختیاری)</p>
                                             @error('icon')
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
-                                    </div>
 
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                                        <!-- Status -->
                                         <div>
                                             <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
                                                 وضعیت <span class="text-red-500">*</span>
                                             </label>
                                             <select name="status" id="status"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                    required>
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                                required>
                                                 <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>
                                                     پیش‌نویس
                                                 </option>
@@ -103,217 +259,148 @@
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
+
+                                        <!-- Published Date -->
                                         <div>
                                             <label for="published_at" class="block text-sm font-medium text-gray-700 mb-2">
                                                 تاریخ انتشار
                                             </label>
                                             <input type="datetime-local" name="published_at" id="published_at"
-                                                   value="{{ old('published_at') }}"
-                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                                value="{{ old('published_at') }}"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
                                             @error('published_at')
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
-                                        <div>
-                                            <div class="space-y-3">
-                                                <div class="flex items-center">
-                                                    <input type="checkbox" name="is_featured" id="is_featured" value="1"
-                                                           {{ old('is_featured') ? 'checked' : '' }}
-                                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                    <label for="is_featured" class="mr-2 block text-sm text-gray-900">
-                                                        مقاله ویژه
-                                                    </label>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <input type="checkbox" name="allow_comments" id="allow_comments" value="1"
-                                                           {{ old('allow_comments', true) ? 'checked' : '' }}
-                                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                    <label for="allow_comments" class="mr-2 block text-sm text-gray-900">
-                                                        اجازه کامنت
-                                                    </label>
-                                                </div>
+
+                                        <!-- Checkboxes -->
+                                        <div class="space-y-3">
+                                            <div class="flex items-center">
+                                                <input type="checkbox" name="is_featured" id="is_featured" value="1"
+                                                    {{ old('is_featured') ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                <label for="is_featured" class="mr-2 block text-sm text-gray-900">
+                                                    مقاله ویژه
+                                                </label>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <input type="checkbox" name="allow_comments" id="allow_comments" value="1"
+                                                    {{ old('allow_comments', true) ? 'checked' : '' }}
+                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                <label for="allow_comments" class="mr-2 block text-sm text-gray-900">
+                                                    اجازه کامنت
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="mt-6">
-                                        <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-2">
-                                            تصویر شاخص
-                                        </label>
-                                        <input type="file" name="featured_image" id="featured_image"
-                                               accept="image/*"
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <p class="mt-1 text-xs text-gray-500">فرمت‌های مجاز: JPEG, PNG, JPG, GIF, WebP (حداکثر 2MB)</p>
+                                <!-- Featured Image -->
+                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
+                                    <div class="px-4 py-3 border-b border-gray-200">
+                                        <h5 class="text-lg font-medium text-gray-900">تصویر شاخص</h5>
+                                    </div>
+                                    <div class="p-4">
+                                        <input type="file" name="featured_image" id="featured_image" accept="image/*"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                                        <p class="mt-2 text-xs text-gray-500">فرمت‌های مجاز: JPEG, PNG, JPG, GIF, WebP (حداکثر 2MB)</p>
                                         @error('featured_image')
                                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
-
-                                <!-- Translations with Tabs -->
-                                <div class="mb-8">
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">ترجمه‌ها</h3>
-
-                                    <!-- Tab Navigation -->
-                                    <div class="border-b border-gray-200 mb-6">
-                                        <nav class="-mb-px flex space-x-8 space-x-reverse" aria-label="Tabs">
-                                            @foreach ($languages as $index => $language)
-                                                <button type="button"
-                                                        onclick="switchTab('{{ $language->code }}')"
-                                                        id="tab-{{ $language->code }}"
-                                                        class="tab-button whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200
-                                                               {{ $index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
-                                                    <span class="w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-sm font-bold ml-2 inline-block">
-                                                        {{ strtoupper($language->code) }}
-                                                    </span>
-                                                    {{ $language->native_name }}
-                                                </button>
-                                            @endforeach
-                                        </nav>
-                                    </div>
-
-                                    <!-- Tab Content -->
-                                    @foreach ($languages as $index => $language)
-                                        <div id="content-{{ $language->code }}"
-                                             class="tab-content {{ $index === 0 ? 'block' : 'hidden' }} bg-gray-50 rounded-lg p-6">
-
-                                            <input type="hidden" name="translations[{{ $index }}][language_id]"
-                                                   value="{{ $language->id }}">
-
-                                            <div class="space-y-4">
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        عنوان <span class="text-red-500">*</span>
-                                                    </label>
-                                                    <input type="text" name="translations[{{ $index }}][title]"
-                                                           value="{{ old("translations.{$index}.title") }}"
-                                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                           required>
-                                                </div>
-
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        خلاصه
-                                                    </label>
-                                                    <textarea name="translations[{{ $index }}][excerpt]" rows="3"
-                                                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ old("translations.{$index}.excerpt") }}</textarea>
-                                                </div>
-
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        محتوای اصلی
-                                                    </label>
-                                                    <textarea name="translations[{{ $index }}][content]" rows="10"
-                                                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ckeditor">{{ old("translations.{$index}.content") }}</textarea>
-                                                </div>
-
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                            Meta Title
-                                                        </label>
-                                                        <input type="text" name="translations[{{ $index }}][meta_title]"
-                                                               value="{{ old("translations.{$index}.meta_title") }}"
-                                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                            Meta Description
-                                                        </label>
-                                                        <textarea name="translations[{{ $index }}][meta_description]" rows="3"
-                                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">{{ old("translations.{$index}.meta_description") }}</textarea>
-                                                    </div>
-                                                </div>
-
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                            نام نویسنده
-                                                        </label>
-                                                        <input type="text" name="translations[{{ $index }}][author_name]"
-                                                               value="{{ old("translations.{$index}.author_name") }}"
-                                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                            منبع
-                                                        </label>
-                                                        <input type="url" name="translations[{{ $index }}][source_url]"
-                                                               value="{{ old("translations.{$index}.source_url") }}"
-                                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    </div>
-                                                </div>
-
-                                                <div>
-                                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                        تگ‌ها (جدا شده با کاما)
-                                                    </label>
-                                                    <input type="text" name="translations[{{ $index }}][tags]"
-                                                           value="{{ old("translations.{$index}.tags") }}"
-                                                           placeholder="خودرو, برقی, 2024"
-                                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <!-- Sidebar -->
-                            <div class="lg:col-span-1">
-                                <!-- Actions -->
-                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-6">
-                                    <div class="px-4 py-3 border-b border-gray-200">
-                                        <h5 class="text-lg font-medium text-gray-900">عملیات</h5>
-                                    </div>
-                                    <div class="p-4">
-                                        <div class="space-y-3">
-                                            <button type="submit" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                                <i class="fas fa-save ml-2"></i>
-                                                ذخیره مقاله
-                                            </button>
-                                            <a href="{{ route('admin.articles.index') }}"
-                                               class="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded inline-block text-center">
-                                                <i class="fas fa-arrow-left ml-2"></i>
-                                                بازگشت
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Image Upload -->
-                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
-                                    <div class="px-4 py-3 border-b border-gray-200">
-                                        <h5 class="text-lg font-medium text-gray-900">آپلود تصویر</h5>
-                                    </div>
-                                    <div class="p-4">
-                                        <div class="space-y-3">
-                                            <div>
-                                                <label for="image" class="block text-sm font-medium text-gray-700 mb-2">
-                                                    انتخاب تصویر
-                                                </label>
-                                                <input type="file" id="image" accept="image/*"
-                                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                            </div>
-                                            <button type="button" onclick="uploadImage()"
-                                                    class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                                <i class="fas fa-upload ml-2"></i>
-                                                آپلود
-                                            </button>
-                                            <div id="uploadResult" class="mt-2"></div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 
-    <script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
+    <style>
+        /* Hide duplicate CKEditor instances */
+        .ck-editor__editable:not(.ck-focused)+.ck-editor {
+            display: none !important;
+        }
+
+        /* Ensure only one editor per textarea */
+        textarea.ckeditor[data-initialized="true"] {
+            display: none !important;
+        }
+
+        /* Hide any extra CKEditor instances */
+        .ck-editor+.ck-editor {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Load CKEditor only once -->
     <script>
+        // Prevent multiple CKEditor loads
+        if (!window.CKEditorLoaded) {
+            window.CKEditorLoaded = true;
+            const script = document.createElement('script');
+            script.src = 'https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js';
+            script.onload = function() {
+                console.log('CKEditor script loaded successfully');
+                window.CKEditorReady = true;
+                // Initialize editors after script loads
+                if (typeof initializeEditors === 'function') {
+                    initializeEditors();
+                }
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+    <script>
+        // Global variables
+        let editorInstances = {};
+        let editorsInitialized = false;
+
+        // Wait for both DOM and CKEditor to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.CKEditorReady) {
+                initializeEditors();
+            } else {
+                // Wait for CKEditor to load
+                const checkCKEditor = setInterval(function() {
+                    if (window.CKEditorReady && typeof ClassicEditor !== 'undefined') {
+                        clearInterval(checkCKEditor);
+                        initializeEditors();
+                    }
+                }, 100);
+            }
+        });
+
+        // Function to initialize editors (called from script loader)
+        function initializeEditors() {
+            if (editorsInitialized) return;
+            editorsInitialized = true;
+
+            console.log('🚀 Initializing CKEditor...');
+            cleanupExistingEditors();
+            initializeFirstTabEditor();
+        }
+
+        // Cleanup any existing CKEditor instances
+        function cleanupExistingEditors() {
+            document.querySelectorAll('.ck-editor').forEach(editor => {
+                if (editor.parentNode) {
+                    editor.parentNode.removeChild(editor);
+                }
+            });
+
+            // Reset all textareas
+            document.querySelectorAll('.ckeditor').forEach(textarea => {
+                textarea.removeAttribute('data-initialized');
+                textarea.style.display = 'block';
+            });
+
+            // Clear instances
+            editorInstances = {};
+            console.log('🧹 Cleaned up existing editors');
+        }
+
         // Tab switching functionality
         function switchTab(languageCode) {
             // Hide all tab contents
@@ -333,19 +420,122 @@
             // Add active state to selected tab button
             document.getElementById('tab-' + languageCode).classList.remove('border-transparent', 'text-gray-500');
             document.getElementById('tab-' + languageCode).classList.add('border-blue-500', 'text-blue-600');
+
+            // Initialize editor for this tab if not already done
+            initializeTabEditor(languageCode);
         }
 
-        // Initialize CKEditor
-        document.addEventListener('DOMContentLoaded', function() {
-            const editors = document.querySelectorAll('.ckeditor');
-            editors.forEach(function(element) {
-                ClassicEditor
-                    .create(element)
-                    .catch(error => {
-                        console.error(error);
-                    });
-            });
-        });
+        function initializeFirstTabEditor() {
+            // Get the first visible tab content
+            const firstTabContent = document.querySelector('.tab-content:not(.hidden)');
+            if (firstTabContent) {
+                const editor = firstTabContent.querySelector('.ckeditor');
+                if (editor && !editor.hasAttribute('data-initialized')) {
+                    console.log('🎯 Initializing first tab editor:', editor.id || 'unnamed');
+                    initializeEditor(editor);
+                }
+            }
+        }
+
+        function initializeTabEditor(languageCode) {
+            const tabContent = document.getElementById('content-' + languageCode);
+            if (tabContent) {
+                const editor = tabContent.querySelector('.ckeditor:not([data-initialized])');
+                if (editor) {
+                    console.log('🎯 Initializing tab editor for:', languageCode, editor.id || 'unnamed');
+                    // Small delay to ensure tab is fully visible
+                    setTimeout(() => {
+                        initializeEditor(editor);
+                    }, 200);
+                }
+            }
+        }
+
+        function initializeEditor(element) {
+            if (!element) {
+                console.warn('⚠️ No element provided to initializeEditor');
+                return;
+            }
+
+            // Multiple checks for already initialized editors
+            if (element.hasAttribute('data-initialized')) {
+                console.log(`ℹ️ Element already marked as initialized: ${element.id || 'unnamed'}`);
+                return;
+            }
+
+            if (element.classList.contains('ck-editor__editable')) {
+                console.log(`ℹ️ Element already has CKEditor classes: ${element.id || 'unnamed'}`);
+                return;
+            }
+
+            if (element.nextSibling && element.nextSibling.classList && element.nextSibling.classList.contains(
+                'ck-editor')) {
+                console.log(`ℹ️ CKEditor already exists next to element: ${element.id || 'unnamed'}`);
+                return;
+            }
+
+            // Check if CKEditor is available
+            if (typeof ClassicEditor === 'undefined') {
+                console.error('❌ ClassicEditor is not available');
+                return;
+            }
+
+            // Ensure element has a unique ID
+            if (!element.id) {
+                element.id = `editor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            }
+
+            // Check if already has an instance
+            if (editorInstances[element.id]) {
+                console.log(`ℹ️ Instance already exists for: ${element.id}`);
+                return;
+            }
+
+            // Mark as initialized BEFORE creating to prevent race conditions
+            element.setAttribute('data-initialized', 'true');
+
+            console.log(`🔧 Creating CKEditor for: ${element.id}`);
+
+            ClassicEditor
+                .create(element, {
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'link', '|',
+                            'bulletedList', 'numberedList', '|',
+                            'outdent', 'indent', '|',
+                            'blockQuote', '|',
+                            'undo', 'redo'
+                        ]
+                    }
+                })
+                .then(editor => {
+                    editorInstances[element.id] = editor;
+                    console.log(`✅ CKEditor successfully initialized: ${element.id}`);
+
+                    // Additional check - hide the original textarea
+                    if (element.style) {
+                        element.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error(`❌ CKEditor initialization failed for ${element.id}:`, error);
+                    // Remove the initialization flag on error
+                    element.removeAttribute('data-initialized');
+                });
+        }
+
+        // Handle title change and auto-generate slug
+        function handleTitleChange(input, languageCode, index) {
+            const title = input.value.trim();
+
+            // Only generate slug for the first language or when slug is empty
+            if (index === 0 || !document.getElementById('slug').value) {
+                if (title) {
+                    generateSlug(title);
+                }
+            }
+        }
 
         // Generate slug from title
         function generateSlug(title) {

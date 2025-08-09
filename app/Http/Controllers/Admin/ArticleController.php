@@ -9,6 +9,7 @@ use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
@@ -71,7 +72,7 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'slug' => 'required|string|unique:articles,slug|max:255',
+            'slug' => 'nullable|string|unique:articles,slug|max:255',
             'type' => 'required|in:article,news',
             'category_id' => 'nullable|exists:categories,id',
             'status' => 'required|in:draft,published,archived',
@@ -81,8 +82,8 @@ class ArticleController extends Controller
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'translations' => 'required|array',
             'translations.*.language_id' => 'required|exists:languages,id',
-            'translations.*.title' => 'required|string|max:255',
-            'translations.*.content' => 'required|string',
+            'translations.*.title' => 'nullable|string|max:255',
+            'translations.*.content' => 'nullable|string',
             'translations.*.excerpt' => 'nullable|string',
             'translations.*.meta_title' => 'nullable|string|max:255',
             'translations.*.meta_description' => 'nullable|string',
@@ -97,6 +98,39 @@ class ArticleController extends Controller
             'gallery.*.sort_order' => 'nullable|integer|min:0',
         ]);
 
+        // Check if at least one translation has a title
+        $hasValidTranslation = collect($request->translations)->some(function ($translation) {
+            return !empty($translation['title']);
+        });
+
+        if (!$hasValidTranslation) {
+            return back()->withErrors(['translations' => 'حداقل یک ترجمه با عنوان الزامی است.'])->withInput();
+        }
+
+        // Generate slug if not provided
+        $slug = $request->slug;
+        if (empty($slug)) {
+            // Find first translation with title
+            $firstTranslationWithTitle = collect($request->translations)->first(function ($translation) {
+                return !empty($translation['title']);
+            });
+
+            if ($firstTranslationWithTitle && !empty($firstTranslationWithTitle['title'])) {
+                $slug = Str::slug($firstTranslationWithTitle['title']);
+
+                // Ensure unique slug
+                $originalSlug = $slug;
+                $count = 1;
+                while (Article::where('slug', $slug)->exists()) {
+                    $slug = $originalSlug . '-' . $count;
+                    $count++;
+                }
+            } else {
+                // Fallback if no title found
+                $slug = 'article-' . time();
+            }
+        }
+
         // Handle featured image upload
         $featuredImagePath = null;
         if ($request->hasFile('featured_image')) {
@@ -104,10 +138,10 @@ class ArticleController extends Controller
         }
 
         $article = Article::create([
-            'slug' => $request->slug,
+            'slug' => $slug,
             'type' => $request->type,
             'category_id' => $request->category_id,
-            'user_id' => auth()->id,
+            'user_id' => Auth::user()->id,
             'status' => $request->status,
             'is_featured' => $request->boolean('is_featured', false),
             'allow_comments' => $request->boolean('allow_comments', true),
@@ -115,12 +149,18 @@ class ArticleController extends Controller
             'featured_image' => $featuredImagePath,
         ]);
 
-        // Create translations
+        // Create translations (only for languages that have a title)
         foreach ($request->translations as $translationData) {
+            // Skip translations without title
+            if (empty($translationData['title'])) {
+                continue;
+            }
+
             // Convert tags string to array if provided
             if (isset($translationData['tags']) && is_string($translationData['tags'])) {
                 $translationData['tags'] = array_filter(array_map('trim', explode(',', $translationData['tags'])));
             }
+
             $article->translations()->create($translationData);
         }
 
@@ -181,8 +221,8 @@ class ArticleController extends Controller
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'translations' => 'required|array',
             'translations.*.language_id' => 'required|exists:languages,id',
-            'translations.*.title' => 'required|string|max:255',
-            'translations.*.content' => 'required|string',
+            'translations.*.title' => 'nullable|string|max:255',
+            'translations.*.content' => 'nullable|string',
             'translations.*.excerpt' => 'nullable|string',
             'translations.*.meta_title' => 'nullable|string|max:255',
             'translations.*.meta_description' => 'nullable|string',
@@ -220,6 +260,11 @@ class ArticleController extends Controller
 
         // Update translations
         foreach ($request->translations as $translationData) {
+            // Skip translation if title is empty
+            if (empty($translationData['title'])) {
+                continue;
+            }
+
             // Convert tags string to array if provided
             if (isset($translationData['tags']) && is_string($translationData['tags'])) {
                 $translationData['tags'] = array_filter(array_map('trim', explode(',', $translationData['tags'])));

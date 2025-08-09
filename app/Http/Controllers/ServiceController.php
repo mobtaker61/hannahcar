@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\InquiryForm;
 use Illuminate\Http\Request;
 
 class ServiceController extends Controller
@@ -55,7 +56,10 @@ class ServiceController extends Controller
             ->take(6)
             ->get();
 
-        return view('services.index', compact('services', 'categories', 'featuredServices'));
+        // Get active inquiry forms for sidebar
+        $inquiryForms = InquiryForm::active()->ordered()->get();
+
+        return view('services.index', compact('services', 'categories', 'featuredServices', 'inquiryForms'));
     }
 
     /**
