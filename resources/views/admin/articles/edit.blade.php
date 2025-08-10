@@ -230,6 +230,77 @@
                                         </div>
                                     @endforeach
                                 </div>
+
+                                <!-- Gallery Images -->
+                                <div class="mt-8">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">گالری تصاویر</h3>
+
+                                    <div class="bg-gray-50 rounded-lg p-6" id="gallery-container">
+                                        <!-- Existing Gallery Images -->
+                                        @if($article->gallery->count() > 0)
+                                            <div class="mb-6">
+                                                <h4 class="text-md font-medium text-gray-800 mb-3">تصاویر موجود</h4>
+                                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="existing-gallery">
+                                                    @foreach($article->gallery as $galleryImage)
+                                                        <div class="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" data-gallery-id="{{ $galleryImage->id }}">
+                                                            <div class="aspect-square">
+                                                                <img src="{{ asset('storage/' . $galleryImage->image_path) }}"
+                                                                     alt="{{ $galleryImage->alt_text }}"
+                                                                     class="w-full h-full object-cover">
+                                                            </div>
+                                                            <div class="p-3">
+                                                                <div class="mb-2">
+                                                                    <label class="block text-xs font-medium text-gray-700 mb-1">Alt Text</label>
+                                                                    <input type="text" name="existing_gallery[{{ $galleryImage->id }}][alt_text]"
+                                                                        value="{{ $galleryImage->alt_text }}"
+                                                                        placeholder="توضیح تصویر"
+                                                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="block text-xs font-medium text-gray-700 mb-1">Caption</label>
+                                                                    <input type="text" name="existing_gallery[{{ $galleryImage->id }}][caption]"
+                                                                        value="{{ $galleryImage->caption }}"
+                                                                        placeholder="عنوان تصویر"
+                                                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                                </div>
+                                                                <div class="mb-2">
+                                                                    <label class="block text-xs font-medium text-gray-700 mb-1">ترتیب</label>
+                                                                    <input type="number" name="existing_gallery[{{ $galleryImage->id }}][sort_order]"
+                                                                        value="{{ $galleryImage->sort_order }}" min="1"
+                                                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                                                </div>
+                                                                <button type="button" onclick="removeExistingGalleryItem(this, {{ $galleryImage->id }})"
+                                                                    class="w-full px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+                                                                    حذف
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        <!-- Add New Images -->
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                افزودن تصاویر جدید به گالری
+                                            </label>
+                                            <input type="file" name="gallery[]" multiple accept="image/*" id="gallery-images"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="mt-2 text-xs text-gray-500">
+                                                فرمت‌های مجاز: JPEG, PNG, JPG, GIF, WebP (حداکثر 2MB هر فایل) - چند فایل انتخاب کنید
+                                            </p>
+                                        </div>
+
+                                        <!-- New Gallery Preview -->
+                                        <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 hidden">
+                                            <!-- New gallery items will be added here dynamically -->
+                                        </div>
+
+                                        <!-- Hidden inputs for deleted items -->
+                                        <div id="deleted-gallery-items"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -510,6 +581,10 @@
             initializeFirstTabEditor();
         }
 
+        // PAGE LOAD TEST
+        console.log('🌟 EDIT PAGE: JavaScript loaded successfully!');
+        console.log('🌟 EDIT PAGE: Current time:', new Date().toLocaleTimeString());
+
         // Cleanup any existing CKEditor instances
         function cleanupExistingEditors() {
             document.querySelectorAll('.ck-editor').forEach(editor => {
@@ -687,5 +762,258 @@
                     document.getElementById('slug').value = data.slug;
                 });
         }
+
+        // Gallery Management for Edit Page
+        let galleryFiles = [];
+        let deletedGalleryItems = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryInput = document.getElementById('gallery-images');
+            const galleryPreview = document.getElementById('gallery-preview');
+
+            if (galleryInput) {
+                galleryInput.addEventListener('change', function(e) {
+                    handleGalleryFiles(e.target.files);
+                });
+            }
+
+                                                // Form submission handler
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Remove old gallery inputs
+                    form.querySelectorAll('input[name^="gallery["]').forEach(input => input.remove());
+                    form.querySelectorAll('input[name="deleted_gallery[]"]').forEach(input => input.remove());
+
+                    // Add current gallery files as hidden inputs
+                    galleryFiles.forEach((file, index) => {
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.name = `gallery[${index}]`;
+                        fileInput.style.display = 'none';
+
+                        // Create DataTransfer to assign file
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        fileInput.files = dt.files;
+
+                        form.appendChild(fileInput);
+
+                        console.log('Added gallery file:', index, file.name);
+                    });
+
+                    // Add deleted items as hidden inputs
+                    deletedGalleryItems.forEach(id => {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'deleted_gallery[]';
+                        hiddenInput.value = id;
+                        form.appendChild(hiddenInput);
+
+                        console.log('Added deleted gallery item:', id);
+                    });
+
+                    console.log('Form submitted with', galleryFiles.length, 'new gallery files and', deletedGalleryItems.length, 'deleted items');
+                });
+            }
+        });
+
+        function handleGalleryFiles(files) {
+            const galleryPreview = document.getElementById('gallery-preview');
+
+            Array.from(files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const currentIndex = galleryFiles.length;
+                    galleryFiles.push(file);
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const galleryItem = createNewGalleryItem(e.target.result, currentIndex, file.name);
+                        galleryPreview.appendChild(galleryItem);
+                        galleryPreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+
+
+        function removeExistingGalleryItem(button, galleryId) {
+            const item = button.closest('[data-gallery-id]');
+            item.style.display = 'none';
+
+            // Add to deleted items
+            deletedGalleryItems.push(galleryId);
+
+            // Add hidden input to mark for deletion
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'deleted_gallery[]';
+            hiddenInput.value = galleryId;
+            document.getElementById('deleted-gallery-items').appendChild(hiddenInput);
+        }
+
+        function removeNewGalleryItem(button, index) {
+            const item = button.closest('.relative');
+            item.remove();
+
+            // Remove from galleryFiles array
+            galleryFiles.splice(index, 1);
+
+            // Hide preview if no items left
+            const galleryPreview = document.getElementById('gallery-preview');
+            if (galleryPreview.children.length === 0) {
+                galleryPreview.classList.add('hidden');
+            }
+
+            // Update indices
+            updateNewGalleryIndices();
+        }
+
+        function updateNewGalleryIndices() {
+            const galleryPreview = document.getElementById('gallery-preview');
+            Array.from(galleryPreview.children).forEach((item, newIndex) => {
+                const inputs = item.querySelectorAll('input[name*="gallery_"]');
+                inputs.forEach(input => {
+                    const name = input.getAttribute('name');
+                    const newName = name.replace(/\[\d+\]/, `[${newIndex}]`);
+                    input.setAttribute('name', newName);
+                });
+
+                const button = item.querySelector('button[onclick*="removeNewGalleryItem"]');
+                if (button) {
+                    button.setAttribute('onclick', `removeNewGalleryItem(this, ${newIndex})`);
+                }
+
+                // Update sort order value
+                const sortInput = item.querySelector('input[name*="sort_order"]');
+                if (sortInput) {
+                    sortInput.value = newIndex + 1;
+                }
+            });
+        }
+
+        // Gallery Preview for new images
+        function setupEditGalleryPreview() {
+            console.log('🔍 EDIT: Looking for gallery elements...');
+            const galleryInput = document.getElementById('gallery-images');
+            const galleryPreview = document.getElementById('gallery-preview');
+
+            console.log('🔍 EDIT: Gallery input:', galleryInput);
+            console.log('🔍 EDIT: Gallery preview:', galleryPreview);
+
+            if (!galleryInput || !galleryPreview) {
+                console.error('❌ EDIT: Gallery elements not found!');
+                return;
+            }
+
+            console.log('✅ EDIT: Gallery elements found, adding event listener...');
+            galleryInput.addEventListener('change', function(e) {
+                console.log('📁 EDIT: Files selected:', e.target.files.length);
+                handleEditGalleryFiles(e.target.files, galleryPreview);
+            });
+        }
+
+        function handleEditGalleryFiles(files, previewContainer) {
+            // Clear previous NEW file previews only
+            previewContainer.innerHTML = '';
+
+            if (files.length === 0) {
+                previewContainer.classList.add('hidden');
+                return;
+            }
+
+            // Show preview container
+            previewContainer.classList.remove('hidden');
+            previewContainer.style.display = 'grid'; // Force grid display
+
+            // Process each file
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                if (!file.type.startsWith('image/')) {
+                    continue;
+                }
+
+                // Check file size (2MB limit)
+                if (file.size > 2097152) {
+                    alert(`فایل "${file.name}" بیش از حد بزرگ است. حداکثر سایز مجاز 2MB می‌باشد.`);
+                    continue;
+                }
+
+                // Create preview for this file
+                createEditFilePreview(file, i, previewContainer);
+            }
+        }
+
+        function createEditFilePreview(file, index, container) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                // Get existing gallery items count to set correct sort order
+                const existingCount = document.querySelectorAll('#existing-gallery [data-gallery-id]').length;
+                const sortOrder = existingCount + index + 1;
+
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
+
+                // Create image container
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'aspect-square';
+                imageDiv.innerHTML = '<img src="' + e.target.result + '" alt="' + file.name + '" class="w-full h-full object-cover">';
+
+                // Create form container
+                const formDiv = document.createElement('div');
+                formDiv.className = 'p-3';
+
+                // Create alt text input
+                const altDiv = document.createElement('div');
+                altDiv.className = 'mb-2';
+                altDiv.innerHTML = '<label class="block text-xs font-medium text-gray-700 mb-1">Alt Text</label>' +
+                    '<input type="text" name="gallery_alt_text[' + index + ']" placeholder="Alt text" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">';
+
+                // Create caption input
+                const captionDiv = document.createElement('div');
+                captionDiv.className = 'mb-2';
+                captionDiv.innerHTML = '<label class="block text-xs font-medium text-gray-700 mb-1">Caption</label>' +
+                    '<input type="text" name="gallery_caption[' + index + ']" placeholder="Caption" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">';
+
+                // Create sort order input
+                const sortDiv = document.createElement('div');
+                sortDiv.className = 'mb-2';
+                sortDiv.innerHTML = '<label class="block text-xs font-medium text-gray-700 mb-1">Sort Order</label>' +
+                    '<input type="number" name="gallery_sort_order[' + index + ']" value="' + sortOrder + '" min="1" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500">';
+
+                // Create status message
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'text-xs text-green-600 font-medium';
+                statusDiv.textContent = '✓ Ready to upload';
+
+                // Assemble form container
+                formDiv.appendChild(altDiv);
+                formDiv.appendChild(captionDiv);
+                formDiv.appendChild(sortDiv);
+                formDiv.appendChild(statusDiv);
+
+                // Assemble preview container
+                previewDiv.appendChild(imageDiv);
+                previewDiv.appendChild(formDiv);
+
+                container.appendChild(previewDiv);
+            };
+
+            reader.onerror = function() {
+                alert(`خطا در خواندن فایل: ${file.name}`);
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        // Initialize edit gallery when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 EDIT FORM: DOM loaded, initializing gallery...');
+            setupEditGalleryPreview();
+        });
     </script>
 </x-admin-layout>

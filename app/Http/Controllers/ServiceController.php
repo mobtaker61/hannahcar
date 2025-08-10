@@ -71,7 +71,7 @@ class ServiceController extends Controller
             'translations.language',
             'category.translations',
             'user',
-            'gallery.language',
+            'gallery',
             'approvedComments.user',
             'approvedComments.replies.user'
         ])

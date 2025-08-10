@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\ArticleGallery;
 use App\Models\Category;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ArticleController extends Controller
 {
@@ -90,12 +92,11 @@ class ArticleController extends Controller
             'translations.*.tags' => 'nullable|string',
             'translations.*.author_name' => 'nullable|string|max:255',
             'translations.*.source_url' => 'nullable|url',
-            'gallery' => 'nullable|array',
-            'gallery.*.language_id' => 'required|exists:languages,id',
-            'gallery.*.image_path' => 'required|string',
-            'gallery.*.alt_text' => 'nullable|string|max:255',
-            'gallery.*.caption' => 'nullable|string',
-            'gallery.*.sort_order' => 'nullable|integer|min:0',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery_alt_text.*' => 'nullable|string|max:255',
+            'gallery_caption.*' => 'nullable|string|max:255',
+            'gallery_sort_order.*' => 'nullable|integer|min:1',
+
         ]);
 
         // Check if at least one translation has a title
@@ -164,10 +165,17 @@ class ArticleController extends Controller
             $article->translations()->create($translationData);
         }
 
-        // Create gallery images
-        if ($request->has('gallery')) {
-            foreach ($request->gallery as $galleryData) {
-                $article->gallery()->create($galleryData);
+                                                        // Handle gallery images
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $index => $file) {
+                $imagePath = $file->store('articles/gallery', 'public');
+
+                $article->gallery()->create([
+                    'image_path' => $imagePath,
+                    'alt_text' => $request->input('gallery_alt_text')[$index] ?? '',
+                    'caption' => $request->input('gallery_caption')[$index] ?? '',
+                    'sort_order' => $request->input('gallery_sort_order')[$index] ?? ($index + 1),
+                ]);
             }
         }
 
@@ -184,7 +192,7 @@ class ArticleController extends Controller
             'translations.language',
             'category.translations',
             'user',
-            'gallery.language',
+            'gallery',
             'comments.user',
             'likes',
             'shares'
@@ -219,6 +227,10 @@ class ArticleController extends Controller
             'allow_comments' => 'boolean',
             'published_at' => 'nullable|date',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery_alt_text.*' => 'nullable|string|max:255',
+            'gallery_caption.*' => 'nullable|string|max:255',
+            'gallery_sort_order.*' => 'nullable|integer|min:1',
             'translations' => 'required|array',
             'translations.*.language_id' => 'required|exists:languages,id',
             'translations.*.title' => 'nullable|string|max:255',
@@ -230,11 +242,12 @@ class ArticleController extends Controller
             'translations.*.author_name' => 'nullable|string|max:255',
             'translations.*.source_url' => 'nullable|url',
             'gallery' => 'nullable|array',
-            'gallery.*.language_id' => 'required|exists:languages,id',
-            'gallery.*.image_path' => 'required|string',
-            'gallery.*.alt_text' => 'nullable|string|max:255',
-            'gallery.*.caption' => 'nullable|string',
-            'gallery.*.sort_order' => 'nullable|integer|min:0',
+            'gallery.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'gallery_alt_text' => 'nullable|array',
+            'gallery_caption' => 'nullable|array',
+            'gallery_sort_order' => 'nullable|array',
+            'deleted_gallery' => 'nullable|array',
+            'existing_gallery' => 'nullable|array',
         ]);
 
         // Handle featured image upload
@@ -275,14 +288,53 @@ class ArticleController extends Controller
             );
         }
 
-        // Update gallery images
-        if ($request->has('gallery')) {
-            // Delete existing gallery images
-            $article->gallery()->delete();
+                // Handle gallery updates
 
-            // Create new gallery images
-            foreach ($request->gallery as $galleryData) {
-                $article->gallery()->create($galleryData);
+        // Handle deleted gallery items
+        if ($request->has('deleted_gallery')) {
+            foreach ($request->deleted_gallery as $galleryId) {
+                $galleryItem = $article->gallery()->find($galleryId);
+                if ($galleryItem) {
+                    // Delete image file
+                    Storage::disk('public')->delete($galleryItem->image_path);
+                    // Delete the gallery item
+                    $galleryItem->delete();
+                }
+            }
+        }
+
+        // Update existing gallery items
+        if ($request->has('existing_gallery')) {
+            foreach ($request->existing_gallery as $galleryId => $galleryData) {
+                $galleryItem = $article->gallery()->find($galleryId);
+                if ($galleryItem) {
+                    $galleryItem->update([
+                        'alt_text' => $galleryData['alt_text'] ?? '',
+                        'caption' => $galleryData['caption'] ?? '',
+                        'sort_order' => $galleryData['sort_order'] ?? 0,
+                    ]);
+                }
+            }
+        }
+
+        // Handle new gallery images
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $index => $file) {
+                // Upload the file
+                $imagePath = $file->store('articles/gallery', 'public');
+
+                // Get additional data from request
+                $altText = $request->input("gallery_alt_text.{$index}", '');
+                $caption = $request->input("gallery_caption.{$index}", '');
+                $sortOrder = $request->input("gallery_sort_order.{$index}", $index + 1);
+
+                // Create single gallery record (no language dependency)
+                $article->gallery()->create([
+                    'image_path' => $imagePath,
+                    'alt_text' => $altText,
+                    'caption' => $caption,
+                    'sort_order' => $sortOrder,
+                ]);
             }
         }
 
@@ -364,4 +416,6 @@ class ArticleController extends Controller
             'path' => $path
         ]);
     }
+
+        // Gallery methods removed - now handled with article save/update
 }

@@ -134,6 +134,29 @@
                                         </div>
                                     @endforeach
                                 </div>
+
+                                <!-- Gallery Images -->
+                                <div class="mt-8">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">گالری تصاویر</h3>
+
+                                    <div class="bg-gray-50 rounded-lg p-6" id="gallery-container">
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                افزودن تصاویر به گالری
+                                            </label>
+                                            <input type="file" name="gallery[]" multiple accept="image/*" id="gallery-images"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="mt-2 text-xs text-gray-500">
+                                                فرمت‌های مجاز: JPEG, PNG, JPG, GIF, WebP (حداکثر 2MB هر فایل) - تصاویر با مقاله ذخیره می‌شوند
+                                            </p>
+                                        </div>
+
+                                        <!-- Gallery Preview -->
+                                        <div id="gallery-preview" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4 hidden">
+                                            <!-- Gallery items will be added here dynamically -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -576,16 +599,76 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('uploadResult').innerHTML =
-                        `<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                            <img src="${data.url}" class="w-full mb-2 rounded" style="max-width: 200px;">
-                            <br>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="${data.path}" readonly>
-                        </div>`;
+                        '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">' +
+                            '<img src="' + data.url + '" class="w-full mb-2 rounded" style="max-width: 200px;">' +
+                            '<br>' +
+                            '<input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="' + data.path + '" readonly>' +
+                        '</div>';
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('خطا در آپلود تصویر');
                 });
+        }
+
+        // Gallery Preview functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Gallery: Setting up preview...');
+            const galleryInput = document.getElementById('gallery-images');
+            const galleryPreview = document.getElementById('gallery-preview');
+
+            if (galleryInput && galleryPreview) {
+                console.log('✅ Gallery: Elements found');
+                galleryInput.addEventListener('change', function(e) {
+                    console.log('📁 Gallery: Files selected:', e.target.files.length);
+                    previewGalleryFiles(e.target.files, galleryPreview);
+                });
+            }
+        });
+
+        function previewGalleryFiles(files, container) {
+            container.innerHTML = '';
+
+            if (files.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            container.style.display = 'grid';
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+
+                if (!file.type.startsWith('image/')) continue;
+                if (file.size > 2097152) {
+                    alert('فایل "' + file.name + '" بیش از حد بزرگ است.');
+                    continue;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'w-full h-48 object-cover';
+
+                    const info = document.createElement('div');
+                    info.className = 'p-3 text-xs text-gray-600';
+                    info.innerHTML =
+                        '<input type="text" name="gallery_alt_text[' + i + ']" placeholder="Alt text" class="w-full mb-2 px-2 py-1 border border-gray-300 rounded">' +
+                        '<input type="text" name="gallery_caption[' + i + ']" placeholder="Caption" class="w-full mb-2 px-2 py-1 border border-gray-300 rounded">' +
+                        '<input type="number" name="gallery_sort_order[' + i + ']" value="' + (i + 1) + '" min="1" class="w-full mb-2 px-2 py-1 border border-gray-300 rounded">' +
+                        '<div class="text-green-600">✓ آماده آپلود</div>';
+
+                    div.appendChild(img);
+                    div.appendChild(info);
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            }
         }
     </script>
 </x-admin-layout>

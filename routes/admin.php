@@ -167,6 +167,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     Route::post('articles/{article}/toggle-featured', [ArticleController::class, 'toggleFeatured'])->name('articles.toggle-featured');
     Route::post('articles/generate-slug', [ArticleController::class, 'generateSlug'])->name('articles.generate-slug');
     Route::post('articles/upload-image', [ArticleController::class, 'uploadImage'])->name('articles.upload-image');
+        // Gallery routes removed - now handled with article save
 
     // Service Management
     Route::resource('services', ServiceController::class)->parameters(['services' => 'article'])->except(['update']);

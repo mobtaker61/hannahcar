@@ -12,7 +12,6 @@ class ArticleGallery extends Model
 
     protected $fillable = [
         'article_id',
-        'language_id',
         'image_path',
         'alt_text',
         'caption',
@@ -27,13 +26,7 @@ class ArticleGallery extends Model
         return $this->belongsTo(Article::class);
     }
 
-    /**
-     * Get the language that owns the gallery image.
-     */
-    public function language(): BelongsTo
-    {
-        return $this->belongsTo(Language::class);
-    }
+
 
     /**
      * Scope a query to order by sort order.

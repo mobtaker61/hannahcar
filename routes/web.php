@@ -80,6 +80,10 @@ Route::get('/api/vehicle-models/{brandId}', function($brandId) {
     return response()->json($models);
 })->name('api.vehicle-models');
 
+
+
+
+
 // Inquiry Routes - با middleware مناسب
 Route::middleware(['web'])->group(function () {
     // API ثبت فرم خرید خودرو خاص
