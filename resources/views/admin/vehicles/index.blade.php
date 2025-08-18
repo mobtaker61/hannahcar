@@ -24,19 +24,19 @@
 
                         <div>
                             <label for="brand_id" class="block text-sm font-medium text-gray-700">{{ __('Brand') }}</label>
-                            <select name="brand_id" id="brand_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <select name="brand_id" id="brand_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-brand-filter">
                                 <option value="">{{ __('All Brands') }}</option>
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand->id }}" {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
-                                        {{ $brand->name }}
+                                @if(request('brand_id') && $brands->where('id', request('brand_id'))->first())
+                                    <option value="{{ request('brand_id') }}" selected>
+                                        {{ $brands->where('id', request('brand_id'))->first()->name }}
                                     </option>
-                                @endforeach
+                                @endif
                             </select>
                         </div>
 
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-700">{{ __('Status') }}</label>
-                            <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <select name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-filter">
                                 <option value="">{{ __('All Status') }}</option>
                                 <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>{{ __('New') }}</option>
                                 <option value="used" {{ request('status') == 'used' ? 'selected' : '' }}>{{ __('Used') }}</option>
@@ -45,7 +45,7 @@
 
                         <div>
                             <label for="publish_status" class="block text-sm font-medium text-gray-700">{{ __('Publish Status') }}</label>
-                            <select name="publish_status" id="publish_status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <select name="publish_status" id="publish_status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-filter">
                                 <option value="">{{ __('All') }}</option>
                                 <option value="draft" {{ request('publish_status') == 'draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
                                 <option value="published" {{ request('publish_status') == 'published' ? 'selected' : '' }}>{{ __('Published') }}</option>
@@ -110,7 +110,7 @@
                                                     {{ $vehicle->full_name }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
-                                                    {{ $vehicle->brand->name }} • {{ $vehicle->model->name }}
+                                                    {{ $vehicle->brand ? $vehicle->brand->name : __('N/A') }} • {{ $vehicle->model ? $vehicle->model->name : __('N/A') }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
                                                     {{ $vehicle->year }} • {{ $vehicle->formatted_mileage }}
@@ -183,6 +183,43 @@
     </div>
 
     <script>
+        $(document).ready(function() {
+            // Initialize Select2 for filter selects
+            $('.select2-filter').select2({
+                placeholder: '{{ __("Select option...") }}',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Initialize Select2 for brand filter with AJAX
+            $('.select2-brand-filter').select2({
+                placeholder: '{{ __("Select a brand...") }}',
+                allowClear: true,
+                width: '100%',
+                ajax: {
+                    url: '{{ route("admin.brands.select") }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                    processResults: function(data, params) {
+                        params.page = params.page || 1;
+                        return {
+                            results: data.data,
+                            pagination: {
+                                more: (params.page * 10) < data.total
+                            }
+                        };
+                    },
+                    cache: true
+                }
+            });
+        });
+
         function toggleFeatured(vehicleId) {
             fetch(`/admin/vehicles/${vehicleId}/toggle-featured`, {
                 method: 'POST',

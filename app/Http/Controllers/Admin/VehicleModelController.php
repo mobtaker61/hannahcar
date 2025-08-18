@@ -96,4 +96,47 @@ class VehicleModelController extends Controller
         return redirect()->route('admin.vehicle-models.index')
             ->with('success', 'Model deleted successfully.');
     }
+
+    public function select(Request $request)
+    {
+        $search = $request->get('q', '');
+        $brandId = $request->get('brand_id');
+
+        $query = VehicleModel::where('is_active', true);
+
+        if ($brandId) {
+            $query->where('brand_id', $brandId);
+        }
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $models = $query->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(10);
+
+        $formattedModels = $models->map(function ($model) {
+            return [
+                'id' => $model->id,
+                'text' => $model->name
+            ];
+        });
+
+        return response()->json([
+            'data' => $formattedModels,
+            'total' => $models->total()
+        ]);
+    }
+
+    public function toggleStatus(VehicleModel $model)
+    {
+        $model->update(['is_active' => !$model->is_active]);
+
+        return response()->json([
+            'success' => true,
+            'is_active' => $model->is_active,
+            'message' => $model->is_active ? 'Model activated successfully.' : 'Model deactivated successfully.'
+        ]);
+    }
 }

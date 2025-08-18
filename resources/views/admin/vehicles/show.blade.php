@@ -40,11 +40,11 @@
                             <dl class="space-y-3">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Brand') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->brand->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->brand ? $vehicle->brand->name : __('N/A') }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Model') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->model->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->model ? $vehicle->model->name : __('N/A') }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Year') }}</dt>
@@ -105,77 +105,77 @@
                                 @if($vehicle->regionalSpec)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Regional Spec') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->regionalSpec->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->regionalSpec ? $vehicle->regionalSpec->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->bodyType)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Body Type') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->bodyType->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->bodyType ? $vehicle->bodyType->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->seatsCount)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Seats Count') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->seatsCount->count }} {{ __('Seats') }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->seatsCount ? $vehicle->seatsCount->count : __('N/A') }} {{ __('Seats') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->fuelType)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Fuel Type') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->fuelType->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->fuelType ? $vehicle->fuelType->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->transmissionType)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Transmission Type') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->transmissionType->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->transmissionType ? $vehicle->transmissionType->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->engineCapacityRange)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Engine Capacity') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->engineCapacityRange->display_name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->engineCapacityRange ? $vehicle->engineCapacityRange->display_name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->horsepowerRange)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Horsepower') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->horsepowerRange->display_name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->horsepowerRange ? $vehicle->horsepowerRange->display_name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->cylindersCount)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Cylinders Count') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->cylindersCount->count }} {{ __('Cylinders') }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->cylindersCount ? $vehicle->cylindersCount->count : __('N/A') }} {{ __('Cylinders') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->steeringSide)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Steering Side') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->steeringSide->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->steeringSide ? $vehicle->steeringSide->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->exteriorColor)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Exterior Color') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->exteriorColor->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->exteriorColor ? $vehicle->exteriorColor->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
                                 @if($vehicle->interiorColor)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Interior Color') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $vehicle->interiorColor->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicle->interiorColor ? $vehicle->interiorColor->name : __('N/A') }}</dd>
                                 </div>
                                 @endif
 
@@ -198,12 +198,12 @@
                     @endif
 
                     <!-- Features -->
-                    @if($vehicle->features && count($vehicle->features) > 0)
+                    @if($vehicle->features_array && count($vehicle->features_array) > 0)
                     <div class="mt-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Features') }}</h3>
                         <ul class="list-disc list-inside space-y-1">
-                            @foreach($vehicle->features as $feature)
-                                <li class="text-sm text-gray-900">{{ $feature }}</li>
+                            @foreach($vehicle->features_array as $feature)
+                                <li class="text-sm text-gray-900">{{ is_string($feature) ? $feature : (is_array($feature) ? json_encode($feature) : 'N/A') }}</li>
                             @endforeach
                         </ul>
                     </div>

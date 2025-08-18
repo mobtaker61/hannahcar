@@ -13,6 +13,7 @@ class Vehicle extends Model
 
     protected $fillable = [
         'slug',
+        'external_id',
         'brand_id',
         'model_id',
         'year',
@@ -41,6 +42,22 @@ class Vehicle extends Model
         'views_count',
         'user_id',
         'published_at',
+        'is_negotiable',
+        'is_imported',
+        'purchase_date',
+        'warranty_expiry',
+        'insurance_expiry',
+        'registration_number',
+        'engine_number',
+        'chassis_number',
+        'doors_count',
+        'air_conditioning',
+        'location_city',
+        'location_country',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'priority_order',
     ];
 
     protected $casts = [
@@ -48,7 +65,12 @@ class Vehicle extends Model
         'features' => 'array',
         'is_featured' => 'boolean',
         'is_available' => 'boolean',
+        'is_negotiable' => 'boolean',
+        'is_imported' => 'boolean',
         'published_at' => 'datetime',
+        'purchase_date' => 'date',
+        'warranty_expiry' => 'date',
+        'insurance_expiry' => 'date',
     ];
 
     // Relationships
@@ -187,18 +209,41 @@ class Vehicle extends Model
     // Accessors
     public function getFormattedPriceAttribute()
     {
-        return number_format($this->price) . ' ' . $this->currency;
+        if (!$this->price) return '';
+        $currency = $this->currency ?: '';
+        return number_format($this->price) . ' ' . $currency;
     }
 
     public function getFormattedMileageAttribute()
     {
-        if (!$this->mileage) return null;
+        if (!$this->mileage) return '';
         return number_format($this->mileage) . ' km';
     }
 
     public function getFullNameAttribute()
     {
-        return $this->brand->name . ' ' . $this->model->name . ' ' . $this->year;
+        $brandName = $this->brand ? $this->brand->name : '';
+        $modelName = $this->model ? $this->model->name : '';
+        $year = $this->year ?: '';
+
+        $parts = array_filter([$brandName, $modelName, $year]);
+        return implode(' ', $parts);
+    }
+
+    public function getFeaturesTextAttribute()
+    {
+        if (is_array($this->features) && !empty($this->features)) {
+            return implode(', ', $this->features);
+        }
+        return '';
+    }
+
+    public function getFeaturesArrayAttribute()
+    {
+        if (is_array($this->features)) {
+            return $this->features;
+        }
+        return [];
     }
 
     // Methods

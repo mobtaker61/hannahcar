@@ -66,6 +66,10 @@ Route::get('services/{service:slug}', [App\Http\Controllers\ServiceController::c
 Route::get('vehicles', [App\Http\Controllers\VehicleController::class, 'index'])->name('vehicles.index');
 Route::get('vehicles/{vehicle:slug}', [App\Http\Controllers\VehicleController::class, 'show'])->name('vehicles.show');
 
+// Vehicle Search Routes for Select2
+Route::get('vehicles/search-brands', [App\Http\Controllers\VehicleController::class, 'searchBrands'])->name('vehicles.search-brands');
+Route::get('vehicles/search-models', [App\Http\Controllers\VehicleController::class, 'searchModels'])->name('vehicles.search-models');
+
 // AJAX Routes for Vehicle Brands and Models
 Route::get('/api/vehicle-brands', function() {
     $brands = \App\Models\VehicleBrand::active()->ordered()->get(['id', 'name']);

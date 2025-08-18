@@ -21,6 +21,8 @@
         "@tailwindcss/aspect-ratio": "^0.4.2",
         "@tailwindcss/line-clamp": "^0.4.4",
         "alpinejs": "^3.14.9",
-        "ckeditor5-build-classic": "^1.0.0"
+        "ckeditor5-build-classic": "^1.0.0",
+        "jquery": "^3.7.1",
+        "select2": "^4.1.0-rc.0"
     }
 }

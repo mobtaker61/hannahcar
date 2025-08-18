@@ -5,14 +5,53 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\Vehicle;
+use App\Models\VehicleBrand;
+use App\Models\VehicleModel;
 
 class VehicleSearch extends Component
 {
     public $searchQuery = '';
     public $activeTab = 'new';
     public $vehicles = [];
+    public $selectedBrand = '';
+    public $selectedModel = '';
+    public $brands = [];
+    public $models = [];
 
     public function mount()
+    {
+        $this->loadVehicles();
+        $this->loadBrands();
+    }
+
+    public function loadBrands()
+    {
+        $this->brands = VehicleBrand::active()
+            ->ordered()
+            ->limit(20)
+            ->get(['id', 'name']);
+    }
+
+    public function loadModels()
+    {
+        if ($this->selectedBrand) {
+            $this->models = VehicleModel::where('brand_id', $this->selectedBrand)
+                ->active()
+                ->ordered()
+                ->get(['id', 'name']);
+        } else {
+            $this->models = collect();
+        }
+    }
+
+    public function updatedSelectedBrand()
+    {
+        $this->selectedModel = '';
+        $this->loadModels();
+        $this->loadVehicles();
+    }
+
+    public function updatedSelectedModel()
     {
         $this->loadVehicles();
     }
@@ -38,6 +77,30 @@ class VehicleSearch extends Component
                 break;
         }
 
+        // Filter by brand
+        if ($this->selectedBrand) {
+            $query->where('brand_id', $this->selectedBrand);
+        }
+
+        // Filter by model
+        if ($this->selectedModel) {
+            $query->where('model_id', $this->selectedModel);
+        }
+
+        // Filter by search query
+        if ($this->searchQuery) {
+            $query->where(function ($q) {
+                $q->whereHas('brand', function ($q) {
+                    $q->where('name', 'like', "%{$this->searchQuery}%");
+                })
+                ->orWhereHas('model', function ($q) {
+                    $q->where('name', 'like', "%{$this->searchQuery}%");
+                })
+                ->orWhere('year', 'like', "%{$this->searchQuery}%")
+                ->orWhere('description', 'like', "%{$this->searchQuery}%");
+            });
+        }
+
         $vehicles = $query->get();
 
         // Transform vehicles to match the expected format
@@ -61,7 +124,7 @@ class VehicleSearch extends Component
 
     public function updatedSearchQuery()
     {
-        // Debounce search - will be handled by Alpine.js
+        $this->loadVehicles();
     }
 
     public function setActiveTab($tab)

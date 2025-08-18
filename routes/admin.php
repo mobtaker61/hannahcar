@@ -220,12 +220,18 @@ Route::post('inquiries/{type}/{id}/logs', [\App\Http\Controllers\Admin\InquiryCo
     Route::post('vehicles/{vehicle}/toggle-featured', [VehicleController::class, 'toggleFeatured'])->name('vehicles.toggle-featured');
     Route::post('vehicles/{vehicle}/toggle-available', [VehicleController::class, 'toggleAvailable'])->name('vehicles.toggle-available');
     Route::get('vehicles/get-models/{brandId}', [VehicleController::class, 'getModels'])->name('vehicles.get-models');
+    Route::get('vehicles/search-brands', [VehicleController::class, 'searchBrands'])->name('vehicles.search-brands');
 
     // Vehicle Brand Management
     Route::resource('vehicle-brands', VehicleBrandController::class);
+    Route::get('vehicle-brands/select', [VehicleBrandController::class, 'select'])->name('vehicle-brands.select');
+    Route::get('brands/select', [VehicleBrandController::class, 'select'])->name('brands.select');
+    Route::patch('/{vehicleBrand}/toggle-status', [VehicleBrandController::class, 'toggleStatus'])->name('vehicle-brands.toggle-status');
 
-            // Vehicle Model Management
-        Route::resource('vehicle-models', VehicleModelController::class);
+    // Vehicle Model Management
+    Route::resource('vehicle-models', VehicleModelController::class);
+    Route::get('vehicle-models/select', [VehicleModelController::class, 'select'])->name('vehicle-models.select');
+    Route::patch('/{vehicleModel}/toggle-status', [VehicleModelController::class, 'toggleStatus'])->name('vehicle-models.toggle-status');
 
         // Vehicle Specifications Management
         Route::get('vehicle-specifications', [VehicleSpecificationsController::class, 'index'])->name('vehicle-specifications.index');

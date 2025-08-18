@@ -87,6 +87,29 @@ class VehicleController extends Controller
             'gallery', 'user'
         ]);
 
+        // جداسازی URL های 360 از features
+        $view360Url = null;
+        $filteredFeatures = [];
+
+        if ($vehicle->features && is_array($vehicle->features)) {
+            foreach ($vehicle->features as $feature) {
+                if (is_string($feature) && filter_var($feature, FILTER_VALIDATE_URL)) {
+                    // بررسی اینکه آیا URL مربوط به 360 view است
+                    if (str_contains($feature, 'photo-motion.com') ||
+                        str_contains($feature, '360') ||
+                        str_contains($feature, 'spinner')) {
+                        $view360Url = $feature;
+                    } else {
+                        // URL های دیگر را در features نگه می‌داریم
+                        $filteredFeatures[] = $feature;
+                    }
+                } else {
+                    // مقادیر غیر URL را نگه می‌داریم
+                    $filteredFeatures[] = $feature;
+                }
+            }
+        }
+
         // Get related vehicles
         $relatedVehicles = Vehicle::with(['brand', 'model', 'gallery'])
             ->where('publish_status', 'published')
@@ -95,11 +118,68 @@ class VehicleController extends Controller
             ->where(function ($query) use ($vehicle) {
                 $query->where('brand_id', $vehicle->brand_id)
                     ->orWhere('model_id', $vehicle->model_id)
-                    ->orWhere('year', $vehicle->year);
+                    ->orWhere('year', $vehicle->id);
             })
             ->limit(6)
             ->get();
 
-        return view('vehicles.show', compact('vehicle', 'relatedVehicles'));
+        return view('vehicles.show', compact('vehicle', 'relatedVehicles', 'view360Url', 'filteredFeatures'));
+    }
+
+    /**
+     * جستجوی برندهای خودرو برای Select2
+     */
+    public function searchBrands(Request $request)
+    {
+        $search = $request->get('search', '');
+        $page = $request->get('page', 1);
+
+        $query = VehicleBrand::active()->ordered();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $brands = $query->paginate(20, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $brands->items(),
+            'next_page_url' => $brands->nextPageUrl(),
+            'prev_page_url' => $brands->previousPageUrl(),
+            'current_page' => $brands->currentPage(),
+            'last_page' => $brands->lastPage(),
+            'total' => $brands->total()
+        ]);
+    }
+
+    /**
+     * جستجوی مدل‌های خودرو برای Select2
+     */
+    public function searchModels(Request $request)
+    {
+        $search = $request->get('search', '');
+        $brandId = $request->get('brand_id');
+        $page = $request->get('page', 1);
+
+        $query = VehicleModel::active()->ordered();
+
+        if ($brandId) {
+            $query->where('brand_id', $brandId);
+        }
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $models = $query->paginate(20, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $models->items(),
+            'next_page_url' => $models->nextPageUrl(),
+            'prev_page_url' => $models->previousPageUrl(),
+            'current_page' => $models->currentPage(),
+            'last_page' => $models->lastPage(),
+            'total' => $models->total()
+        ]);
     }
 }

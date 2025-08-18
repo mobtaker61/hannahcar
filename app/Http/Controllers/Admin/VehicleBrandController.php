@@ -109,4 +109,38 @@ class VehicleBrandController extends Controller
         return redirect()->route('admin.vehicle-brands.index')
             ->with('success', 'Brand deleted successfully.');
     }
+
+    public function select(Request $request)
+    {
+        $search = $request->get('q', '');
+
+        $brands = VehicleBrand::where('name', 'like', "%{$search}%")
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->paginate(10);
+
+        $formattedBrands = $brands->map(function ($brand) {
+            return [
+                'id' => $brand->id,
+                'text' => $brand->name
+            ];
+        });
+
+        return response()->json([
+            'data' => $formattedBrands,
+            'total' => $brands->total()
+        ]);
+    }
+
+    public function toggleStatus(VehicleBrand $brand)
+    {
+        $brand->update(['is_active' => !$brand->is_active]);
+
+        return response()->json([
+            'success' => true,
+            'is_active' => $brand->is_active,
+            'message' => $brand->is_active ? 'Brand activated successfully.' : 'Brand deactivated successfully.'
+        ]);
+    }
 }

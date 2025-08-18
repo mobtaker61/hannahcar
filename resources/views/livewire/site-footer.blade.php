@@ -66,7 +66,6 @@
             <!-- Newsletter & Contact -->
             <div class="text-start">
                 <h3 class="text-lg font-semibold mb-4">{{ __('Newsletter') }}</h3>
-                <p class="text-gray-300 mb-4">{{ __('Newsletter description') }}</p>
 
                 <form class="mb-6">
                     <div class="flex space-x-2">
@@ -79,7 +78,7 @@
                     </div>
                 </form>
 
-                <div class="space-y-2">
+                <div class="space-y-2" style="direction: ltr;">
                     <div class="flex items-center justify-start">
                         <i class="fas fa-phone text-accent mr-2"></i>
                         <span class="text-gray-300">+98 912 345 6789</span>

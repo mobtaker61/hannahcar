@@ -130,6 +130,20 @@ class VehicleController extends Controller
             'features' => 'nullable|string',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'purchase_date' => 'nullable|date',
+            'warranty_expiry' => 'nullable|date',
+            'insurance_expiry' => 'nullable|date',
+            'registration_number' => 'nullable|string|max:20',
+            'engine_number' => 'nullable|string|max:30',
+            'chassis_number' => 'nullable|string|max:30',
+            'doors_count' => 'nullable|in:2,3,4,5',
+            'air_conditioning' => 'nullable|in:manual,automatic,dual_zone,none',
+            'location_city' => 'nullable|string|max:100',
+            'location_country' => 'nullable|string|max:100',
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords' => 'nullable|string|max:255',
+            'priority_order' => 'nullable|integer|min:0|max:999',
         ]);
 
         // Generate slug
@@ -156,6 +170,8 @@ class VehicleController extends Controller
         // Handle boolean fields
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_available'] = $request->has('is_available');
+        $validated['is_negotiable'] = $request->has('is_negotiable');
+        $validated['is_imported'] = $request->has('is_imported');
 
         // Create vehicle
         $vehicle = Vehicle::create(array_merge($validated, [
@@ -238,6 +254,8 @@ class VehicleController extends Controller
             'publish_status' => 'required|in:draft,published,archived',
             'is_featured' => 'boolean',
             'is_available' => 'boolean',
+            'is_negotiable' => 'boolean',
+            'is_imported' => 'boolean',
             'regional_spec_id' => 'nullable|exists:regional_specs,id',
             'body_type_id' => 'nullable|exists:body_types,id',
             'seats_count_id' => 'nullable|exists:seats_counts,id',
@@ -253,6 +271,20 @@ class VehicleController extends Controller
             'features' => 'nullable|string',
             'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'purchase_date' => 'nullable|date',
+            'warranty_expiry' => 'nullable|date',
+            'insurance_expiry' => 'nullable|date',
+            'registration_number' => 'nullable|string|max:20',
+            'engine_number' => 'nullable|string|max:30',
+            'chassis_number' => 'nullable|string|max:30',
+            'doors_count' => 'nullable|in:2,3,4,5',
+            'air_conditioning' => 'nullable|in:manual,automatic,dual_zone,none',
+            'location_city' => 'nullable|string|max:100',
+            'location_country' => 'nullable|string|max:100',
+            'meta_title' => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords' => 'nullable|string|max:255',
+            'priority_order' => 'nullable|integer|min:0|max:999',
         ]);
 
         // Generate new slug if brand/model/year changed
@@ -282,6 +314,8 @@ class VehicleController extends Controller
         // Handle boolean fields
         $validated['is_featured'] = $request->has('is_featured');
         $validated['is_available'] = $request->has('is_available');
+        $validated['is_negotiable'] = $request->has('is_negotiable');
+        $validated['is_imported'] = $request->has('is_imported');
 
         // Set publish date if publishing
         if ($validated['publish_status'] === 'published' && $vehicle->publish_status !== 'published') {
@@ -332,6 +366,19 @@ class VehicleController extends Controller
             ->get(['id', 'name']);
 
         return response()->json($models);
+    }
+
+    public function searchBrands(Request $request)
+    {
+        $search = $request->get('search', '');
+
+        $brands = VehicleBrand::where('name', 'like', "%{$search}%")
+            ->active()
+            ->ordered()
+            ->limit(20)
+            ->get(['id', 'name']);
+
+        return response()->json($brands);
     }
 
     public function toggleFeatured(Vehicle $vehicle)
