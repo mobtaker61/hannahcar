@@ -38,9 +38,14 @@
     "Latest news and articles related to the automotive industry": "آخرین اخبار و مقالات مرتبط با صنعت خودرو",
     "News": "اخبار",
     "Articles": "مقالات",
-    "New": "جدید",
+    "All": "همه",
+    "Brand New": "صفر",
     "Used": "دست دوم",
     "Export": "واردات",
+    "Latest": "آخرین",
+    "Special Offer": "پیشنهاد ویژه",
+    "15% Discount": "تخفیف 15%",
+    "No vehicles found": "خودرویی یافت نشد",
+    "Try changing your search criteria": "معیارهای جستجو را تغییر دهید",
     "Inquiry Forms": "فرم‌های استعلام"
-
 }

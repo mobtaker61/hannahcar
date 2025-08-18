@@ -153,7 +153,10 @@ class Vehicle extends Model
     public function scopePublished($query)
     {
         return $query->where('publish_status', 'published')
-                    ->where('published_at', '<=', now());
+                    ->where(function($q) {
+                        $q->whereNull('published_at')
+                          ->orWhere('published_at', '<=', now());
+                    });
     }
 
     public function scopeFeatured($query)

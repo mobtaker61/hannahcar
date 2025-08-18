@@ -35,6 +35,7 @@ class SpotlightCarousel extends Component
                 'id' => $vehicle->id,
                 'name' => $vehicle->full_name,
                 'price' => $vehicle->price,
+                'currency' => $vehicle->currency ?: 'تومان', // اضافه کردن واحد پول
                 'original_price' => $vehicle->price * 1.15, // 15% markup for original price
                 'badge' => $this->getBadgeText($vehicle),
                 'badge_color' => $this->getBadgeColor($vehicle),
@@ -49,11 +50,11 @@ class SpotlightCarousel extends Component
     {
         // Determine badge text based on vehicle properties
         if ($vehicle->created_at->diffInDays(now()) <= 7) {
-            return 'جدید';
+            return __('New');
         } elseif ($vehicle->is_featured) {
-            return 'پیشنهاد ویژه';
+            return __('Special Offer');
         } else {
-            return 'تخفیف 15%';
+            return __('15% Discount');
         }
     }
 

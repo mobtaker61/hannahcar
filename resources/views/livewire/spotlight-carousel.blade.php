@@ -31,11 +31,11 @@
                     <div class="flex items-center {{ app()->getLocale() === 'fa' ? 'space-x-reverse space-x-3' : 'space-x-3' }} mb-4">
                         @if($vehicle['original_price'] !== $vehicle['price'])
                             <span class="text-base text-white/60 line-through">
-                                {{ number_format($vehicle['original_price']) }} {{ app()->getLocale() === 'fa' ? 'تومان' : 'Toman' }}
+                                {{ number_format($vehicle['original_price']) }} {{ $vehicle['currency'] }}
                             </span>
                         @endif
                         <span class="text-xl font-bold text-accent">
-                            {{ number_format($vehicle['price']) }} {{ app()->getLocale() === 'fa' ? 'تومان' : 'Toman' }}
+                            {{ number_format($vehicle['price']) }} {{ $vehicle['currency'] }}
                         </span>
                     </div>
                     <a href="{{ route('vehicles.show', $vehicle['slug']) }}" class="inline-block bg-accent text-primary px-6 py-2 rounded-lg font-semibold hover:bg-accent/90 transition-colors text-sm">

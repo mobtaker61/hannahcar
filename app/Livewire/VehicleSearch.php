@@ -11,7 +11,7 @@ use App\Models\VehicleModel;
 class VehicleSearch extends Component
 {
     public $searchQuery = '';
-    public $activeTab = 'new';
+    public $activeTab = 'all'; // تغییر از 'new' به 'all'
     public $vehicles = [];
     public $selectedBrand = '';
     public $selectedModel = '';
@@ -66,6 +66,10 @@ class VehicleSearch extends Component
 
         // Filter by status based on active tab
         switch ($this->activeTab) {
+            case 'all':
+                // نمایش همه خودروها (10 خودروی آخر)
+                $query->limit(10);
+                break;
             case 'new':
                 $query->new();
                 break;
