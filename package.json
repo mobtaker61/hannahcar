@@ -9,7 +9,7 @@
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.16",
-        "@tailwindcss/vite": "^4.0.0",
+        "@tailwindcss/vite": "^4.1.12",
         "autoprefixer": "^10.4.21",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.2.0",
@@ -18,8 +18,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
-        "@tailwindcss/aspect-ratio": "^0.4.2",
-        "@tailwindcss/line-clamp": "^0.4.4",
+        "@tailwindcss/postcss": "^4.1.12",
         "alpinejs": "^3.14.9",
         "ckeditor5-build-classic": "^1.0.0",
         "jquery": "^3.7.1",

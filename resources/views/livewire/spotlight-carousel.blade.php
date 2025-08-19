@@ -47,7 +47,7 @@
     @endforeach
 
     <!-- Dots Indicator - Moved to bottom and start side -->
-    <div class="absolute bottom-6 {{ app()->getLocale() === 'fa' ? 'right-6' : 'left-6' }} flex {{ app()->getLocale() === 'fa' ? 'space-x-reverse space-x-2' : 'space-x-2' }}">
+                    <div class="absolute bottom-6 {{ app()->getLocale() === 'fa' ? 'right-6' : 'left-6' }} flex {{ app()->getLocale() === 'fa' ? 'space-x-reverse space-x-2' : 'space-x-2' }}">
         @foreach($spotlightVehicles as $index => $vehicle)
             <button wire:click="goToSlide({{ $index }})"
                     class="w-3 h-3 rounded-full transition-all duration-300 {{ $index === $currentSlide ? 'bg-accent' : 'bg-white/50 hover:bg-white/70' }}">

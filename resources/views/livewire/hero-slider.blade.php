@@ -32,7 +32,7 @@
     @endforeach
 
     <!-- Control Buttons Group -->
-    <div class="absolute top-4 {{ app()->getLocale() === 'fa' ? 'left-4' : 'right-4' }} flex items-center space-x-2 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }} z-10">
+                    <div class="absolute top-4 {{ app()->getLocale() === 'fa' ? 'left-4' : 'right-4' }} flex items-center space-x-2 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }} z-10">
         <!-- Previous Button -->
         <button wire:click="prevSlide" wire:loading.attr="disabled"
                 class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-full transition-all duration-300 backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed">
