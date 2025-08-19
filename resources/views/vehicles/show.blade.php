@@ -610,7 +610,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
-                                    {{ __('360° View') }}
+                                    {{ __('360View') }}
                                 </h3>
                                 <div class="aspect-w-16 aspect-h-9 mb-4">
                                     <iframe src="{{ $view360Url }}" class="view360-iframe" frameborder="0" allowfullscreen loading="lazy">
