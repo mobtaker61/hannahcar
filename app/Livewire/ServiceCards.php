@@ -71,28 +71,28 @@ class ServiceCards extends Component
         if (empty($this->services)) {
             $this->services = [
                 [
-                    'title' => app()->getLocale() === 'fa' ? 'استعلام قیمت' : 'Price Quote',
-                    'description' => app()->getLocale() === 'fa' ? 'دریافت قیمت دقیق خودرو مورد نظر' : 'Get accurate price for your desired vehicle',
+                    'title' => app()->getLocale() === 'fa' ? 'استعلام قیمت خودرو' : 'Vehicle Price Quote',
+                    'description' => app()->getLocale() === 'fa' ? 'دریافت قیمت دقیق خودرو مورد نظر شما با بهترین شرایط' : 'Get accurate price for your desired vehicle with best conditions',
                     'icon' => 'fas fa-calculator',
-                    'link' => '#price-quote'
+                    'link' => route('inquiry-forms.show', 'price-quote')
                 ],
                 [
-                    'title' => app()->getLocale() === 'fa' ? 'هزینه واردات' : 'Import Cost',
-                    'description' => app()->getLocale() === 'fa' ? 'محاسبه هزینه‌های واردات خودرو' : 'Calculate vehicle import costs',
+                    'title' => app()->getLocale() === 'fa' ? 'محاسبه هزینه واردات' : 'Import Cost Calculator',
+                    'description' => app()->getLocale() === 'fa' ? 'محاسبه دقیق هزینه‌های واردات خودرو به ایران و امارات' : 'Calculate exact vehicle import costs to Iran and UAE',
                     'icon' => 'fas fa-ship',
-                    'link' => '#import-cost'
+                    'link' => route('inquiry-forms.show', 'import-cost')
                 ],
                 [
-                    'title' => app()->getLocale() === 'fa' ? 'بررسی VIN' : 'VIN Check',
-                    'description' => app()->getLocale() === 'fa' ? 'استعلام سابقه کامل خودرو' : 'Complete vehicle history inquiry',
+                    'title' => app()->getLocale() === 'fa' ? 'بررسی سابقه VIN' : 'VIN History Check',
+                    'description' => app()->getLocale() === 'fa' ? 'استعلام کامل سابقه خودرو با شماره VIN و گزارش کامل' : 'Complete vehicle history inquiry with VIN number and full report',
                     'icon' => 'fas fa-search',
-                    'link' => '#vin-check'
+                    'link' => route('inquiry-forms.show', 'vin-check')
                 ],
                 [
                     'title' => app()->getLocale() === 'fa' ? 'ثبت نام فروشنده' : 'Seller Registration',
-                    'description' => app()->getLocale() === 'fa' ? 'ثبت نام به عنوان فروشنده خودرو' : 'Register as a vehicle seller',
+                    'description' => app()->getLocale() === 'fa' ? 'ثبت نام به عنوان فروشنده خودرو و دسترسی به بازار بزرگ' : 'Register as a vehicle seller and access large market',
                     'icon' => 'fas fa-user-plus',
-                    'link' => '#seller-registration'
+                    'link' => route('inquiry-forms.show', 'seller-registration')
                 ]
             ];
         }

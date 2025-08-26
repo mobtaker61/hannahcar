@@ -32,9 +32,8 @@ class ServicesGrid extends Component
                 ->where('category_id', $servicesCategory->id)
                 ->published()
                 ->services() // Only services
-                ->featured()
                 ->orderBy('published_at', 'desc')
-                ->take(6)
+                ->take(8) // Increased from 6 to 8
                 ->get();
 
             // Transform articles to services array
