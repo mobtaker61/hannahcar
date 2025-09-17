@@ -13,6 +13,7 @@ class VehicleModel extends Model
 
     protected $fillable = [
         'brand_id',
+        'vehicle_variant_id',
         'name',
         'slug',
         'description',
@@ -33,6 +34,16 @@ class VehicleModel extends Model
     public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class, 'model_id');
+    }
+
+    public function vehicleVariant(): BelongsTo
+    {
+        return $this->belongsTo(VehicleVariant::class, 'vehicle_variant_id');
+    }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(VehicleVariant::class, 'model_id');
     }
 
     // Scopes

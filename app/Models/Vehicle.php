@@ -16,6 +16,7 @@ class Vehicle extends Model
         'external_id',
         'brand_id',
         'model_id',
+        'vehicle_variant_id',
         'year',
         'price',
         'currency',
@@ -82,6 +83,11 @@ class Vehicle extends Model
     public function model(): BelongsTo
     {
         return $this->belongsTo(VehicleModel::class, 'model_id');
+    }
+
+    public function vehicleVariant(): BelongsTo
+    {
+        return $this->belongsTo(VehicleVariant::class, 'vehicle_variant_id');
     }
 
     public function regionalSpec(): BelongsTo

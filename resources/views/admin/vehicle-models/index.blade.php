@@ -16,16 +16,17 @@
                 <!-- Filters -->
                 <div class="p-6 border-b border-gray-200">
                     <form method="GET" action="{{ route('admin.vehicle-models.index') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="brand_id" class="block text-sm font-medium text-gray-700">{{ __('Filter by Brand') }}</label>
-                            <select name="brand_id" id="brand_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">{{ __('All Brands') }}</option>
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand->id }}" {{ request('brand_id') == $brand->id ? 'selected' : '' }}>
-                                        {{ $brand->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="relative">
+                            <label for="brand_search" class="block text-sm font-medium text-gray-700">{{ __('Filter by Brand') }}</label>
+                            <input type="text"
+                                   id="brand_search"
+                                   name="brand_search"
+                                   placeholder="{{ __('Search brands...') }}"
+                                   value="{{ request('brand_search') }}"
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                   autocomplete="off">
+                            <input type="hidden" name="brand_id" id="brand_id" value="{{ request('brand_id') }}">
+                            <div id="brand_results" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto mt-1"></div>
                         </div>
 
                         <div class="flex items-end">
@@ -123,4 +124,72 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const brandSearch = document.getElementById('brand_search');
+            const brandId = document.getElementById('brand_id');
+            const brandResults = document.getElementById('brand_results');
+            let searchTimeout;
+
+            // جستجوی برند
+            brandSearch.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                if (query.length < 2) {
+                    brandResults.classList.add('hidden');
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    fetch(`/admin/api/brands/search?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.brands && data.brands.length > 0) {
+                                displayBrandResults(data.brands);
+                            } else {
+                                brandResults.classList.add('hidden');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            brandResults.classList.add('hidden');
+                        });
+                }, 300);
+            });
+
+            // نمایش نتایج برند
+            function displayBrandResults(brands) {
+                brandResults.innerHTML = '';
+                brands.forEach(brand => {
+                    const div = document.createElement('div');
+                    div.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0';
+                    div.textContent = brand.name;
+                    div.addEventListener('click', () => selectBrand(brand));
+                    brandResults.appendChild(div);
+                });
+                brandResults.classList.remove('hidden');
+            }
+
+            // انتخاب برند
+            function selectBrand(brand) {
+                brandSearch.value = brand.name;
+                brandId.value = brand.id;
+                brandResults.classList.add('hidden');
+            }
+
+            // مخفی کردن نتایج با کلیک خارج
+            document.addEventListener('click', function(e) {
+                if (!brandSearch.contains(e.target) && !brandResults.contains(e.target)) {
+                    brandResults.classList.add('hidden');
+                }
+            });
+
+            // اگر برند قبلاً انتخاب شده (در صورت refresh صفحه)
+            if (brandId.value) {
+                // برند قبلاً انتخاب شده
+            }
+        });
+    </script>
 </x-admin-layout>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleModel;
+use App\Models\VehicleVariant;
 use App\Models\RegionalSpec;
 use App\Models\BodyType;
 use App\Models\SeatsCount;
@@ -65,12 +66,13 @@ class VehicleController extends Controller
             });
         }
 
-        $vehicles = $query->paginate(12);
+        $vehicles = $query->paginate(23);
         $brands = VehicleBrand::active()->ordered()->get();
+        $vehicleVariants = VehicleVariant::active()->ordered()->get();
         $bodyTypes = BodyType::active()->ordered()->get();
         $fuelTypes = FuelType::active()->ordered()->get();
 
-        return view('vehicles.index', compact('vehicles', 'brands', 'bodyTypes', 'fuelTypes'));
+        return view('vehicles.index', compact('vehicles', 'brands', 'vehicleVariants', 'bodyTypes', 'fuelTypes'));
     }
 
     public function show(Vehicle $vehicle)

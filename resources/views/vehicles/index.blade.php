@@ -9,103 +9,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Filters -->
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg mb-8">
-                <div class="p-6">
-                    <form method="GET" action="{{ route('vehicles.index') }}" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <!-- Search -->
-                            <div>
-                                <label for="search" class="block text-sm font-medium text-gray-700">{{ __('Search') }}</label>
-                                <input type="text" name="search" id="search"
-                                       value="{{ request('search') }}"
-                                       placeholder="{{ __('Search vehicles...') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-
-                            <!-- Brand -->
-                            <div>
-                                <label for="brand_id" class="block text-sm font-medium text-gray-700">{{ __('Brand') }}</label>
-                                <select name="brand_id" id="brand_id"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-brand">
-                                    <option value="">{{ __('All Brands') }}</option>
-                                    @if(request('brand_id') && $selectedBrand)
-                                        <option value="{{ $selectedBrand->id }}" selected>{{ $selectedBrand->name }}</option>
-                                    @endif
-                                </select>
-                            </div>
-
-                            <!-- Model -->
-                            <div>
-                                <label for="model_id" class="block text-sm font-medium text-gray-700">{{ __('Model') }}</label>
-                                <select name="model_id" id="model_id"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-model">
-                                    <option value="">{{ __('All Models') }}</option>
-                                    @if(request('model_id') && $selectedModel)
-                                        <option value="{{ $selectedModel->id }}" selected>{{ $selectedModel->name }}</option>
-                                    @endif
-                                </select>
-                            </div>
-
-                            <!-- Status -->
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">{{ __('Status') }}</label>
-                                <select name="status" id="status"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">{{ __('All Status') }}</option>
-                                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>{{ __('New') }}</option>
-                                    <option value="used" {{ request('status') == 'used' ? 'selected' : '' }}>{{ __('Used') }}</option>
-                                    <option value="export" {{ request('status') == 'export' ? 'selected' : '' }}>{{ __('Export') }}</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Year -->
-                            <div>
-                                <label for="year" class="block text-sm font-medium text-gray-700">{{ __('Year') }}</label>
-                                <select name="year" id="year"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">{{ __('All Years') }}</option>
-                                    @for($year = date('Y'); $year >= 2010; $year--)
-                                        <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
-                                            {{ $year }}
-                                        </option>
-                                    @endfor
-                                </select>
-                            </div>
-
-                            <!-- Price Range -->
-                            <div>
-                                <label for="min_price" class="block text-sm font-medium text-gray-700">{{ __('Min Price') }}</label>
-                                <input type="number" name="min_price" id="min_price"
-                                       value="{{ request('min_price') }}"
-                                       placeholder="{{ __('Min Price') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-                            <div>
-                                <label for="max_price" class="block text-sm font-medium text-gray-700">{{ __('Max Price') }}</label>
-                                <input type="number" name="max_price" id="max_price"
-                                       value="{{ request('max_price') }}"
-                                       placeholder="{{ __('Max Price') }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500">
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-center">
-                            <button type="submit"
-                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                                {{ __('Filter') }}
-                            </button>
-                            <a href="{{ route('vehicles.index') }}"
-                               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                                {{ __('Clear Filters') }}
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <!-- Results Count -->
             <div class="mb-4">
                 <p class="text-gray-600">
@@ -114,18 +17,18 @@
                 </p>
             </div>
 
-            <!-- Vehicles Grid -->
+            <!-- Vehicles Grid with Lazy Loading -->
             @if($vehicles->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="vehicles-grid">
                     @foreach($vehicles as $vehicle)
-                        <div class="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
-                            <!-- Image Section with Bookmark Icon -->
+                        <div class="bg-white overflow-hidden shadow-lg rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 vehicle-card" data-vehicle-id="{{ $vehicle->id }}">
+                            <!-- Image Section with Lazy Loading -->
                             <div class="relative">
                                 <a href="{{ route('vehicles.show', $vehicle) }}" class="block">
                                     @if($vehicle->featured_image)
                                         <img src="{{ Storage::url($vehicle->featured_image) }}"
                                              alt="{{ $vehicle->full_name }}"
-                                             class="w-full h-48 object-cover">
+                                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
                                     @else
                                         <div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
                                             <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,9 +148,167 @@
         </div>
     </div>
 
+    <!-- Floating Filter Button - Bigger Size -->
+    <div class="fixed bottom-8 left-8 z-50">
+        <button id="filter-toggle"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white w-20 h-20 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Floating Filter Overlay -->
+    <div id="filter-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden">
+        <div class="flex items-center justify-start min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto ml-8" style="position: absolute; left: 2rem;">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-gray-900">{{ __('Filter Vehicles') }}</h3>
+                        <button id="filter-close" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form method="GET" action="{{ route('vehicles.index') }}" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Search -->
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700">{{ __('Search') }}</label>
+                                <input type="text" name="search" id="search"
+                                       value="{{ request('search') }}"
+                                       placeholder="{{ __('Search vehicles...') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+
+                            <!-- Brand -->
+                            <div>
+                                <label for="brand_id" class="block text-sm font-medium text-gray-700">{{ __('Brand') }}</label>
+                                <select name="brand_id" id="brand_id"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-brand">
+                                    <option value="">{{ __('All Brands') }}</option>
+                                    @if(request('brand_id') && $selectedBrand)
+                                        <option value="{{ $selectedBrand->id }}" selected>{{ $selectedBrand->name }}</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Model -->
+                            <div>
+                                <label for="model_id" class="block text-sm font-medium text-gray-700">{{ __('Model') }}</label>
+                                <select name="model_id" id="model_id"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 select2-model">
+                                    <option value="">{{ __('All Models') }}</option>
+                                    @if(request('model_id') && $selectedModel)
+                                        <option value="{{ $selectedModel->id }}" selected>{{ $selectedModel->name }}</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">{{ __('Status') }}</label>
+                                <select name="status" id="status"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">{{ __('All Status') }}</option>
+                                    <option value="new" {{ request('status') == 'new' ? 'selected' : '' }}>{{ __('New') }}</option>
+                                    <option value="used" {{ request('status') == 'used' ? 'selected' : '' }}>{{ __('Used') }}</option>
+                                    <option value="export" {{ request('status') == 'export' ? 'selected' : '' }}>{{ __('Export') }}</option>
+                                </select>
+                        </div>
+
+                            <!-- Year -->
+                            <div>
+                                <label for="year" class="block text-sm font-medium text-gray-700">{{ __('Year') }}</label>
+                                <select name="year" id="year"
+                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">{{ __('All Years') }}</option>
+                                    @for($year = date('Y'); $year >= 2010; $year--)
+                                        <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                                            {{ $year }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+
+                            <!-- Price Range -->
+                            <div>
+                                <label for="min_price" class="block text-sm font-medium text-gray-700">{{ __('Min Price') }}</label>
+                                <input type="number" name="min_price" id="min_price"
+                                       value="{{ request('min_price') }}"
+                                       placeholder="{{ __('Min Price') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="max_price" class="block text-sm font-medium text-gray-700">{{ __('Max Price') }}</label>
+                                <input type="number" name="max_price" id="max_price"
+                                       value="{{ request('max_price') }}"
+                                       placeholder="{{ __('Max Price') }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-4 border-t">
+                            <button type="submit"
+                                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+                                {{ __('Apply Filters') }}
+                            </button>
+                            <a href="{{ route('vehicles.index') }}"
+                               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+                                {{ __('Clear Filters') }}
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        $(document).ready(function() {
-            // Initialize Select2 for brand and model
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing filter...');
+
+            // Filter overlay functionality
+            const filterToggle = document.getElementById('filter-toggle');
+            const filterOverlay = document.getElementById('filter-overlay');
+            const filterClose = document.getElementById('filter-close');
+
+            console.log('Filter elements:', { filterToggle, filterOverlay, filterClose });
+
+            if (filterToggle && filterOverlay && filterClose) {
+                filterToggle.addEventListener('click', function() {
+                    console.log('Filter toggle clicked');
+                    filterOverlay.classList.remove('hidden');
+                    filterOverlay.classList.add('flex');
+                    document.body.classList.add('overflow-hidden');
+                });
+
+                filterClose.addEventListener('click', function() {
+                    console.log('Filter close clicked');
+                    filterOverlay.classList.remove('flex');
+                    filterOverlay.classList.add('hidden');
+                    document.body.classList.remove('overflow-hidden');
+                });
+
+                // Close overlay when clicking outside
+                filterOverlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        console.log('Closing overlay - clicked outside');
+                        this.classList.remove('flex');
+                        this.classList.add('hidden');
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                });
+            } else {
+                console.error('Some filter elements not found');
+            }
+
+            // Initialize Select2 for brand and model (only if jQuery is available)
+            if (typeof $ !== 'undefined' && typeof $.fn.select2 !== 'undefined') {
+                console.log('jQuery and Select2 available, initializing...');
+
             $('.select2-brand').select2({
                 placeholder: '{{ __("Search and select brand...") }}',
                 allowClear: true,
@@ -358,6 +419,9 @@
                     });
                 }
             });
+            } else {
+                console.log('jQuery or Select2 not available, skipping Select2 initialization');
+            }
         });
     </script>
 </x-app-layout>

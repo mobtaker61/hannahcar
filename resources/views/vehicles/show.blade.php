@@ -1,17 +1,119 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $vehicle->full_name }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('vehicles.index') }}"
-                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    {{ __('Back to Vehicles') }}
-                </a>
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+
+        <!-- Hero Content -->
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Side - Vehicle Info -->
+                <div class="text-white space-y-6">
+                    <!-- Vehicle Title -->
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            @if($vehicle->brand && $vehicle->brand->logo)
+                                <img src="{{ Storage::url($vehicle->brand->logo) }}" alt="{{ $vehicle->brand->name }}" class="w-12 h-12 object-contain bg-white/10 rounded-lg p-2">
+                            @endif
+                            <div>
+                                <p class="text-xl text-gray-300 mt-2">
+                                    {{ $vehicle->year }} • {{ $vehicle->brand->name ?? '' }} • {{ $vehicle->model->name ?? '' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        @if($vehicle->year)
+                            <div class="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                <div class="text-2xl font-bold">{{ $vehicle->year }}</div>
+                                <div class="text-sm text-gray-300">{{ __('Year') }}</div>
+                            </div>
+                        @endif
+                        @if($vehicle->mileage)
+                            <div class="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                <div class="text-2xl font-bold">{{ number_format($vehicle->mileage) }}</div>
+                                <div class="text-sm text-gray-300">{{ __('KM') }}</div>
+                            </div>
+                        @endif
+                        @if($vehicle->fuelType)
+                            <div class="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                <div class="text-2xl font-bold">{{ $vehicle->fuelType->name }}</div>
+                                <div class="text-sm text-gray-300">{{ __('Fuel') }}</div>
+                            </div>
+                        @endif
+                        @if($vehicle->transmissionType)
+                            <div class="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                                <div class="text-2xl font-bold">{{ $vehicle->transmissionType->name }}</div>
+                                <div class="text-sm text-gray-300">{{ __('Transmission') }}</div>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Price and Actions -->
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 sm:space-x-6">
+                        <div class="text-center sm:text-left">
+                            <div class="text-4xl font-bold text-green-400 mb-1">
+                                {{ number_format($vehicle->price) }} {{ $vehicle->currency }}
+                            </div>
+                            <div class="text-sm text-gray-300">{{ __('Price includes VAT') }}</div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <a href="{{ route('vehicles.index') }}" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl border border-white/30 transition-all duration-200 hover:scale-105 backdrop-blur-sm">
+                                {{ __('Back to Vehicles') }}
+                            </a>
+                            @if($vehicle->user && $vehicle->user->phone)
+                                <a href="tel:{{ $vehicle->user->phone }}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg">
+                                    {{ __('Call Now') }}
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Hero Image -->
+                <div class="relative">
+                    @if($vehicle->featured_image)
+                        <div class="relative overflow-hidden rounded-2xl shadow-2xl">
+                            <img src="{{ Storage::url($vehicle->featured_image) }}"
+                                 alt="{{ $vehicle->full_name }}"
+                                 class="w-full h-80 lg:h-96 object-cover transform hover:scale-105 transition-transform duration-700">
+
+                            <!-- Status Badge -->
+                            <div class="absolute top-4 left-4 z-10">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                                    {{ $vehicle->status === 'new' ? 'bg-green-500 text-white' :
+                                       ($vehicle->status === 'used' ? 'bg-blue-500 text-white' : 'bg-orange-500 text-white') }}">
+                                    {{ __(ucfirst($vehicle->status)) }}
+                                </span>
+                            </div>
+
+                            <!-- Price Badge -->
+                            <div class="absolute top-4 right-4 z-10">
+                                <span class="inline-flex items-center px-4 py-2 rounded-full text-lg font-bold bg-white/95 backdrop-blur-sm text-green-600 shadow-lg">
+                                    {{ number_format($vehicle->price) }} {{ $vehicle->currency }}
+                                </span>
+                            </div>
+
+                            <!-- Overlay Gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                        </div>
+                    @else
+                        <div class="w-full h-80 lg:h-96 bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl flex items-center justify-center border-2 border-white/20">
+                            <div class="text-center text-white/60">
+                                <svg class="w-20 h-20 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-xl">{{ __('No Image Available') }}</span>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
-    </x-slot>
+    </div>
 
     <!-- Custom CSS for Gallery -->
     <style>
@@ -185,45 +287,6 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Breadcrumb -->
-            <nav class="flex mb-6" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a href="{{ route('home') }}"
-                            class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                                </path>
-                            </svg>
-                            {{ __('Home') }}
-                        </a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            <a href="{{ route('vehicles.index') }}"
-                                class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">{{ __('Vehicles') }}</a>
-                        </div>
-                    </li>
-                    <li aria-current="page">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-                            <span
-                                class="ml-1 text-sm font-medium text-gray-500 md:ml-2">{{ $vehicle->full_name }}</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2">
@@ -623,15 +686,14 @@
                     <!-- Contact & Actions -->
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6 sticky top-6">
                         <div class="p-6">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                    </path>
-                                </svg>
-                                {{ __('Contact Seller') }}
-                            </h3>
+                            <h2 class="font-bold leading-tight text-center mb-4">{{ $vehicle->full_name }}</h2>
+
+                            <div class="text-center sm:text-left mb-4">
+                                <div class="text-4xl font-bold text-green-400 mb-1">
+                                    {{ number_format($vehicle->price) }} {{ $vehicle->currency }}
+                                </div>
+                                <div class="text-sm text-gray-300">{{ __('Price includes VAT') }}</div>
+                            </div>
 
                             @if ($vehicle->user)
                                 <div class="mb-6 p-4 bg-gray-50 rounded-lg">

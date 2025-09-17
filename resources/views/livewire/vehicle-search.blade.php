@@ -180,6 +180,17 @@
 
     <!-- Search and Filter Row -->
     <div class="flex {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'flex-row-reverse' : 'flex-row' }} justify-between items-center mb-8">
+        <!-- Search Bar -->
+        <div class="relative w-96">
+            <input wire:model.live.debounce.500ms="searchQuery"
+                   type="text"
+                   placeholder="{{ __('Search for your dream car') }}"
+                   class="w-full {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'pr-12 pl-4' : 'pl-12 pr-4' }} py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500">
+            <div class="absolute inset-y-0 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'right-0 pr-4' : 'left-0 pl-4' }} flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </div>
+        </div>
+
         <!-- Filter Tabs -->
         <div class="flex {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse space-x-8' : 'space-x-8' }}">
             <button wire:click="setActiveTab('all')"
@@ -211,16 +222,50 @@
                 @endif
             </button>
         </div>
+    </div>
 
-        <!-- Search Bar -->
-        <div class="relative w-96">
-            <input wire:model.live.debounce.500ms="searchQuery"
-                   type="text"
-                   placeholder="{{ __('Search for your dream car') }}"
-                   class="w-full {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'pr-12 pl-4' : 'pl-12 pr-4' }} py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500">
-            <div class="absolute inset-y-0 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'right-0 pr-4' : 'left-0 pl-4' }} flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
-            </div>
+    <!-- Brand/Model/Variant Filter Row -->
+    <div class="flex {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'flex-row-reverse' : 'flex-row' }} items-center space-x-4 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse' : '' }} mb-6">
+        <!-- Brand Filter -->
+        <div class="flex items-center space-x-2 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse' : '' }}">
+            <label class="text-sm font-medium text-gray-700">{{ __('Brand') }}:</label>
+            <select wire:model.live="selectedBrand"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 min-w-32">
+                <option value="">{{ __('All Brands') }}</option>
+                @foreach($brands as $brand)
+                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Model Filter -->
+        <div class="flex items-center space-x-2 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse' : '' }}">
+            <label class="text-sm font-medium text-gray-700">{{ __('Model') }}:</label>
+            <select wire:model.live="selectedModel"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 min-w-32"
+                    {{ empty($selectedBrand) ? 'disabled' : '' }}>
+                <option value="">{{ __('All Models') }}</option>
+                @if($selectedBrand)
+                    @foreach($models as $model)
+                        <option value="{{ $model->id }}">{{ $model->name }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
+
+        <!-- Variant Filter -->
+        <div class="flex items-center space-x-2 {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse' : '' }}">
+            <label class="text-sm font-medium text-gray-700">{{ __('Variant') }}:</label>
+            <select wire:model.live="selectedVariant"
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 min-w-32"
+                    {{ empty($selectedModel) ? 'disabled' : '' }}>
+                <option value="">{{ __('All Variants') }}</option>
+                @if($selectedModel)
+                    @foreach($vehicleVariants as $variant)
+                        <option value="{{ $variant->id }}">{{ $variant->name }}</option>
+                    @endforeach
+                @endif
+            </select>
         </div>
     </div>
 

@@ -49,24 +49,24 @@ class VehicleBrandController extends Controller
             ->with('success', 'Brand created successfully.');
     }
 
-    public function show(VehicleBrand $brand)
+    public function show(VehicleBrand $vehicleBrand)
     {
-        $brand->load(['models', 'vehicles' => function ($query) {
+        $vehicleBrand->load(['models', 'vehicles' => function ($query) {
             $query->latest()->take(10);
         }]);
 
-        return view('admin.vehicle-brands.show', compact('brand'));
+        return view('admin.vehicle-brands.show', compact('vehicleBrand'));
     }
 
-    public function edit(VehicleBrand $brand)
+    public function edit(VehicleBrand $vehicleBrand)
     {
-        return view('admin.vehicle-brands.edit', compact('brand'));
+        return view('admin.vehicle-brands.edit', compact('vehicleBrand'));
     }
 
-    public function update(Request $request, VehicleBrand $brand)
+    public function update(Request $request, VehicleBrand $vehicleBrand)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:vehicle_brands,name,' . $brand->id,
+            'name' => 'required|string|max:255|unique:vehicle_brands,name,' . $vehicleBrand->id,
             'description' => 'nullable|string',
             'website' => 'nullable|url',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -78,33 +78,33 @@ class VehicleBrandController extends Controller
 
         if ($request->hasFile('logo')) {
             // Delete old logo
-            if ($brand->logo) {
-                Storage::disk('public')->delete($brand->logo);
+            if ($vehicleBrand->logo) {
+                Storage::disk('public')->delete($vehicleBrand->logo);
             }
             $logoPath = $request->file('logo')->store('brands/logos', 'public');
             $validated['logo'] = $logoPath;
         }
 
-        $brand->update($validated);
+        $vehicleBrand->update($validated);
 
         return redirect()->route('admin.vehicle-brands.index')
             ->with('success', 'Brand updated successfully.');
     }
 
-    public function destroy(VehicleBrand $brand)
+    public function destroy(VehicleBrand $vehicleBrand)
     {
         // Check if brand has vehicles
-        if ($brand->vehicles()->count() > 0) {
+        if ($vehicleBrand->vehicles()->count() > 0) {
             return redirect()->route('admin.vehicle-brands.index')
                 ->with('error', 'Cannot delete brand with existing vehicles.');
         }
 
         // Delete logo
-        if ($brand->logo) {
-            Storage::disk('public')->delete($brand->logo);
+        if ($vehicleBrand->logo) {
+            Storage::disk('public')->delete($vehicleBrand->logo);
         }
 
-        $brand->delete();
+        $vehicleBrand->delete();
 
         return redirect()->route('admin.vehicle-brands.index')
             ->with('success', 'Brand deleted successfully.');
@@ -133,14 +133,30 @@ class VehicleBrandController extends Controller
         ]);
     }
 
-    public function toggleStatus(VehicleBrand $brand)
+    public function toggleStatus(VehicleBrand $vehicleBrand)
     {
-        $brand->update(['is_active' => !$brand->is_active]);
+        $vehicleBrand->update(['is_active' => !$vehicleBrand->is_active]);
 
         return response()->json([
             'success' => true,
-            'is_active' => $brand->is_active,
-            'message' => $brand->is_active ? 'Brand activated successfully.' : 'Brand deactivated successfully.'
+            'is_active' => $vehicleBrand->is_active,
+            'message' => $vehicleBrand->is_active ? 'Brand activated successfully.' : 'Brand deactivated successfully.'
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+
+        $brands = VehicleBrand::where('name', 'like', "%{$query}%")
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(10)
+            ->get(['id', 'name']);
+
+        return response()->json([
+            'brands' => $brands
         ]);
     }
 }

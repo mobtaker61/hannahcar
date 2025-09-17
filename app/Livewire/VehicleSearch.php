@@ -7,6 +7,7 @@ use Livewire\Attributes\On;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleModel;
+use App\Models\VehicleVariant;
 
 class VehicleSearch extends Component
 {
@@ -15,13 +16,16 @@ class VehicleSearch extends Component
     public $vehicles = [];
     public $selectedBrand = '';
     public $selectedModel = '';
+    public $selectedVariant = '';
     public $brands = [];
     public $models = [];
+    public $vehicleVariants = [];
 
     public function mount()
     {
         $this->loadVehicles();
         $this->loadBrands();
+        $this->loadVehicleVariants();
     }
 
     public function loadBrands()
@@ -30,6 +34,18 @@ class VehicleSearch extends Component
             ->ordered()
             ->limit(20)
             ->get(['id', 'name']);
+    }
+
+    public function loadVehicleVariants()
+    {
+        if ($this->selectedModel) {
+            $this->vehicleVariants = VehicleVariant::where('model_id', $this->selectedModel)
+                ->active()
+                ->ordered()
+                ->get(['id', 'name']);
+        } else {
+            $this->vehicleVariants = collect();
+        }
     }
 
     public function loadModels()
@@ -47,11 +63,20 @@ class VehicleSearch extends Component
     public function updatedSelectedBrand()
     {
         $this->selectedModel = '';
+        $this->selectedVariant = ''; // Reset variant when brand changes
         $this->loadModels();
+        $this->loadVehicleVariants();
         $this->loadVehicles();
     }
 
     public function updatedSelectedModel()
+    {
+        $this->selectedVariant = ''; // Reset variant when model changes
+        $this->loadVehicleVariants();
+        $this->loadVehicles();
+    }
+
+    public function updatedSelectedVariant()
     {
         $this->loadVehicles();
     }
@@ -89,6 +114,11 @@ class VehicleSearch extends Component
         // Filter by model
         if ($this->selectedModel) {
             $query->where('model_id', $this->selectedModel);
+        }
+
+        // Filter by vehicle variant
+        if ($this->selectedVariant) {
+            $query->where('vehicle_variant_id', $this->selectedVariant);
         }
 
         // Filter by search query

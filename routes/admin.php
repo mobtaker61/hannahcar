@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Admin\VehicleBrandController;
 use App\Http\Controllers\Admin\VehicleModelController;
+use App\Http\Controllers\Admin\VehicleVariantController;
 use App\Http\Controllers\Admin\VehicleSpecificationsController;
 
 // Admin Routes
@@ -232,6 +233,16 @@ Route::post('inquiries/{type}/{id}/logs', [\App\Http\Controllers\Admin\InquiryCo
     Route::resource('vehicle-models', VehicleModelController::class);
     Route::get('vehicle-models/select', [VehicleModelController::class, 'select'])->name('vehicle-models.select');
     Route::patch('/{vehicleModel}/toggle-status', [VehicleModelController::class, 'toggleStatus'])->name('vehicle-models.toggle-status');
+
+    // Vehicle Variant Management
+    Route::resource('vehicle-variants', VehicleVariantController::class);
+    Route::patch('/{vehicleVariant}/toggle-status', [VehicleVariantController::class, 'toggleStatus'])->name('vehicle-variants.toggle-status');
+
+    // API Routes for Vehicle Variants
+    Route::prefix('api')->name('api.')->group(function () {
+        Route::get('brands/search', [VehicleBrandController::class, 'search'])->name('brands.search');
+        Route::get('brands/{brand}/models', [VehicleModelController::class, 'getByBrand'])->name('brands.models');
+    });
 
         // Vehicle Specifications Management
         Route::get('vehicle-specifications', [VehicleSpecificationsController::class, 'index'])->name('vehicle-specifications.index');

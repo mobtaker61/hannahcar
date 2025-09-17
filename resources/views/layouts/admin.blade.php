@@ -196,6 +196,10 @@
                                     <i class="fas fa-car-side ml-2"></i>
                                     مدل‌های خودرو
                                 </a>
+                                <a href="{{ route('admin.vehicle-variants.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+                                    <i class="fas fa-layer-group ml-2"></i>
+                                    واریانت‌های خودرو
+                                </a>
                                 <a href="{{ route('admin.vehicle-specifications.index') }}" class="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
                                     <i class="fas fa-cogs ml-2"></i>
                                     ویژگی‌های خودرو

@@ -1,17 +1,17 @@
 <x-admin-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ $brand->name }}
-            </h2>
-            <div class="flex space-x-2">
-                <a href="{{ route('admin.vehicle-brands.edit', $brand) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    {{ __('Edit') }}
-                </a>
-                <a href="{{ route('admin.vehicle-brands.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-                    {{ __('Back to List') }}
-                </a>
-            </div>
+                            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    {{ $vehicleBrand->name }}
+                </h2>
+                <div class="flex space-x-2">
+                    <a href="{{ route('admin.vehicle-brands.edit', $vehicleBrand) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        {{ __('Edit') }}
+                    </a>
+                    <a href="{{ route('admin.vehicle-brands.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        {{ __('Back to List') }}
+                    </a>
+                </div>
         </div>
     </x-slot>
 
@@ -21,8 +21,8 @@
                 <div class="p-6">
                     <!-- Brand Logo -->
                     <div class="mb-6">
-                        @if($brand->logo)
-                            <img src="{{ Storage::url($brand->logo) }}" alt="{{ $brand->name }}"
+                        @if($vehicleBrand->logo)
+                            <img src="{{ Storage::url($vehicleBrand->logo) }}" alt="{{ $vehicleBrand->name }}"
                                  class="w-32 h-32 object-contain rounded-lg">
                         @else
                             <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -40,14 +40,14 @@
                             <dl class="space-y-3">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Brand Name') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $brand->name }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicleBrand->name }}</dd>
                                 </div>
-                                @if($brand->website)
+                                @if($vehicleBrand->website)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Website') }}</dt>
                                     <dd class="text-sm text-gray-900">
-                                        <a href="{{ $brand->website }}" target="_blank" class="text-blue-600 hover:text-blue-900">
-                                            {{ $brand->website }}
+                                        <a href="{{ $vehicleBrand->website }}" target="_blank" class="text-blue-600 hover:text-blue-900">
+                                            {{ $vehicleBrand->website }}
                                         </a>
                                     </dd>
                                 </div>
@@ -56,14 +56,14 @@
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Status') }}</dt>
                                     <dd class="text-sm text-gray-900">
                                         <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                            {{ $brand->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            {{ $brand->is_active ? __('Active') : __('Inactive') }}
+                                            {{ $vehicleBrand->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                            {{ $vehicleBrand->is_active ? __('Active') : __('Inactive') }}
                                         </span>
                                     </dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Sort Order') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $brand->sort_order }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicleBrand->sort_order }}</dd>
                                 </div>
                             </dl>
                         </div>
@@ -74,30 +74,30 @@
                             <dl class="space-y-3">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Total Models') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $brand->models->count() }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicleBrand->models->count() }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Total Vehicles') }}</dt>
-                                    <dd class="text-sm text-gray-900">{{ $brand->vehicles->count() }}</dd>
+                                    <dd class="text-sm text-gray-900">{{ $vehicleBrand->vehicles->count() }}</dd>
                                 </div>
                             </dl>
                         </div>
                     </div>
 
                     <!-- Description -->
-                    @if($brand->description)
+                    @if($vehicleBrand->description)
                     <div class="mt-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Description') }}</h3>
-                        <p class="text-sm text-gray-900">{{ $brand->description }}</p>
+                        <p class="text-sm text-gray-900">{{ $vehicleBrand->description }}</p>
                     </div>
                     @endif
 
                     <!-- Models -->
-                    @if($brand->models && $brand->models->count() > 0)
+                    @if($vehicleBrand->models && $vehicleBrand->models->count() > 0)
                     <div class="mt-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Models') }}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            @foreach($brand->models as $model)
+                            @foreach($vehicleBrand->models as $model)
                                 <div class="bg-gray-50 p-4 rounded-lg">
                                     <h4 class="font-medium text-gray-900">{{ $model->name }}</h4>
                                     @if($model->description)
@@ -116,7 +116,7 @@
                     @endif
 
                     <!-- Recent Vehicles -->
-                    @if($brand->vehicles && $brand->vehicles->count() > 0)
+                    @if($vehicleBrand->vehicles && $vehicleBrand->vehicles->count() > 0)
                     <div class="mt-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Recent Vehicles') }}</h3>
                         <div class="overflow-x-auto">
@@ -126,22 +126,22 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Vehicle') }}
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Model') }}
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Year') }}
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Price') }}
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Status') }}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($brand->vehicles as $vehicle)
+                                    @foreach($vehicleBrand->vehicles as $vehicle)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-indigo-600 hover:text-indigo-900">
@@ -177,11 +177,11 @@
                         <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">{{ __('Created At') }}</dt>
-                                <dd class="text-sm text-gray-900">{{ $brand->created_at->format('M d, Y H:i') }}</dd>
+                                <dd class="text-sm text-gray-900">{{ $vehicleBrand->created_at->format('M d, Y H:i') }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">{{ __('Updated At') }}</dt>
-                                <dd class="text-sm text-gray-900">{{ $brand->updated_at->format('M d, Y H:i') }}</dd>
+                                <dd class="text-sm text-gray-900">{{ $vehicleBrand->updated_at->format('M d, Y H:i') }}</dd>
                             </div>
                         </dl>
                     </div>
