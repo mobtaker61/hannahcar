@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
+            $table->unsignedBigInteger('model_id')->nullable();
             $table->timestamps();
         });
     }
