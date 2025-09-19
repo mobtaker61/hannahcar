@@ -9,20 +9,11 @@
     </section>
 
     <!-- Cars Search and Slider -->
-    <section class="py-16 bg-white relative">
+    <section class="py-16 relative">
         <!-- Decorative Elements -->
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-20"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 hidden">
-                <h2 class="text-4xl font-bold text-primary mb-6 relative">
-                    <span class="relative">
-                        جستجو و انتخاب خودرو
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-accent rounded-full"></div>
-                    </span>
-                </h2>
-                <p class="text-xl text-secondary-text max-w-2xl mx-auto leading-relaxed">خودرو مورد نظر خود را پیدا کنید و با بهترین قیمت خریداری کنید</p>
-            </div>
             <livewire:vehicle-search />
         </div>
     </section>

@@ -105,12 +105,29 @@
             left: auto !important;
             right: 0.75rem !important;
         }
+
+        /* Global background override */
+        .bg-surface {
+            background-color: rgba(245, 245, 245, 1) !important;
+        }
+    </style>
+    <style>
+        /* Sticky transparent header styles */
+        .site-header {
+            background-color: transparent;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .site-header.scrolled {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
     </style>
 </head>
 
 <body class="font-sans antialiased bg-surface">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
+    <header id="siteHeader" class="site-header fixed top-0 left-0 right-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Left Side -->
@@ -329,7 +346,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1">
+    <main class="flex-1 pt-16">
         @if (isset($header))
             <div class="bg-gradient-to-r from-primary to-accent text-white">
                 <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -348,6 +365,21 @@
     <livewire:site-footer />
 
     <script>
+        // Header scroll behavior: toggle white background on scroll
+        (function(){
+            const header = document.getElementById('siteHeader');
+            if(!header) return;
+            const onScroll = () => {
+                if (window.scrollY > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            };
+            document.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('load', onScroll);
+        })();
+    </script>
         function toggleLanguageMenu() {
             const menu = document.getElementById('languageMenu');
             menu.classList.toggle('hidden');
