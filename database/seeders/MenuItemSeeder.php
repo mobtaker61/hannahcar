@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\Language;
+use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuItemTranslation;
-use App\Models\Menu;
-use App\Models\Language;
+use Illuminate\Database\Seeder;
 
 class MenuItemSeeder extends Seeder
 {
@@ -24,22 +23,22 @@ class MenuItemSeeder extends Seeder
             // Header Menu Items
             [
                 'menu_id' => $menus->where('position', 'header')->first()->id,
-                'url' => '/',
+                'url' => '/vehicles',
                 'target' => '_self',
                 'parent_id' => null,
                 'sort_order' => 1,
                 'is_active' => true,
                 'translations' => [
                     'fa' => [
-                        'title' => 'صفحه اصلی',
+                        'title' => 'گاراژ',
                         'is_active' => true,
                     ],
                     'en' => [
-                        'title' => 'Home',
+                        'title' => 'Garage',
                         'is_active' => true,
                     ],
                     'ar' => [
-                        'title' => 'الرئيسية',
+                        'title' => 'الغاراژ',
                         'is_active' => true,
                     ],
                 ],
@@ -90,7 +89,7 @@ class MenuItemSeeder extends Seeder
             ],
             [
                 'menu_id' => $menus->where('position', 'header')->first()->id,
-                'url' => '/inquiries',
+                'url' => '/inquiry-forms',
                 'target' => '_self',
                 'parent_id' => null,
                 'sort_order' => 4,

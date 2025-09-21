@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use App\Models\Language;
 use App\Models\Setting;
 use App\Models\SettingTranslation;
-use App\Models\Language;
+use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
 {
@@ -23,28 +22,28 @@ class SettingSeeder extends Seeder
                 'key' => 'site_name',
                 'group' => 'general',
                 'type' => 'text',
-                'default_value' => 'هانا کار',
+                'default_value' => 'هانا لاکچری',
                 'sort_order' => 1,
                 'is_active' => true,
                 'is_public' => true,
                 'translations' => [
                     'fa' => [
                         'label' => 'نام سایت',
-                        'value' => 'هانا کار',
+                        'value' => 'هانا لاکچری',
                         'description' => 'نام اصلی سایت که در هدر و عنوان صفحات نمایش داده می‌شود',
                         'help_text' => 'نام سایت را وارد کنید',
                         'is_active' => true,
                     ],
                     'en' => [
                         'label' => 'Site Name',
-                        'value' => 'Hannah Car',
+                        'value' => 'Hannah Luxury',
                         'description' => 'Main site name displayed in header and page titles',
                         'help_text' => 'Enter the site name',
                         'is_active' => true,
                     ],
                     'ar' => [
                         'label' => 'اسم الموقع',
-                        'value' => 'هانا كار',
+                        'value' => 'هانا لاکچری',
                         'description' => 'اسم الموقع الرئيسي المعروض في الترويسة وعناوين الصفحات',
                         'help_text' => 'أدخل اسم الموقع',
                         'is_active' => true,
@@ -119,28 +118,28 @@ class SettingSeeder extends Seeder
                 'key' => 'site_keywords',
                 'group' => 'seo',
                 'type' => 'text',
-                'default_value' => 'خودرو, خدمات خودرو, تعمیر خودرو, هانا کار',
+                'default_value' => 'خودرو, خدمات خودرو, تعمیر خودرو, هانا کار,واردات,جانبازی,ترابر,بنزینی,دیزلی,امینیوم,بیوتیک,تیرباتری,کروز,بدون کروز,دوچرخه,موتورسیکلت,موتورسیکلت های لوکس,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین',
                 'sort_order' => 4,
                 'is_active' => true,
                 'is_public' => true,
                 'translations' => [
                     'fa' => [
                         'label' => 'کلمات کلیدی',
-                        'value' => 'خودرو, خدمات خودرو, تعمیر خودرو, هانا کار',
+                        'value' => 'خودرو, خدمات خودرو, تعمیر خودرو, هانا کار,واردات,جانبازی,ترابر,بنزینی,دیزلی,امینیوم,بیوتیک,تیرباتری,کروز,بدون کروز,دوچرخه,موتورسیکلت,موتورسیکلت های لوکس,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین',
                         'description' => 'کلمات کلیدی سایت برای SEO',
                         'help_text' => 'کلمات کلیدی را با کاما جدا کنید',
                         'is_active' => true,
                     ],
                     'en' => [
                         'label' => 'Site Keywords',
-                        'value' => 'car, car services, car repair, hannah car',
+                        'value' => 'car, car services, car repair, hannah car,import,export,trailer,bensin,diesel,aminium,biotik,battery,cruise,non-cruise,bicycle,motorcycle,motorcycle luxury,motorcycle light,motorcycle heavy,motorcycle light,motorcycle heavy',
                         'description' => 'Site keywords for SEO',
                         'help_text' => 'Separate keywords with commas',
                         'is_active' => true,
                     ],
                     'ar' => [
                         'label' => 'كلمات مفتاحية',
-                        'value' => 'سيارة, خدمات السيارات, إصلاح السيارات, هانا كار',
+                        'value' => 'سيارة, خدمات السيارات, إصلاح السيارات, هانا كار,واردات,جانبازی,ترابر,بنزینی,دیزلی,امینیوم,بیوتیک,تیرباتری,کروز,بدون کروز,دوچرخه,موتورسیکلت,موتورسیکلت های لوکس,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین,موتورسیکلت های سبک و سنگین',
                         'description' => 'الكلمات المفتاحية للموقع لتحسين محركات البحث',
                         'help_text' => 'افصل الكلمات المفتاحية بفواصل',
                         'is_active' => true,
@@ -151,30 +150,62 @@ class SettingSeeder extends Seeder
                 'key' => 'primary_color',
                 'group' => 'general',
                 'type' => 'color',
-                'default_value' => '#3B82F6',
+                'default_value' => '#1F4E79',
                 'sort_order' => 5,
                 'is_active' => true,
                 'is_public' => true,
                 'translations' => [
                     'fa' => [
                         'label' => 'رنگ اصلی',
-                        'value' => '#3B82F6',
+                        'value' => '#1F4E79',
                         'description' => 'رنگ اصلی سایت',
                         'help_text' => 'رنگ اصلی سایت را انتخاب کنید',
                         'is_active' => true,
                     ],
                     'en' => [
                         'label' => 'Primary Color',
-                        'value' => '#3B82F6',
+                        'value' => '#1F4E79',
                         'description' => 'Main site color',
                         'help_text' => 'Select the main site color',
                         'is_active' => true,
                     ],
                     'ar' => [
                         'label' => 'اللون الأساسي',
-                        'value' => '#3B82F6',
+                        'value' => '#1F4E79',
                         'description' => 'اللون الأساسي للموقع',
                         'help_text' => 'اختر اللون الأساسي للموقع',
+                        'is_active' => true,
+                    ],
+                ],
+            ],
+            [
+                'key' => 'secondary_color',
+                'group' => 'general',
+                'type' => 'color',
+                'default_value' => '#A0A0A0',
+                'sort_order' => 6,
+                'is_active' => true,
+                'is_public' => true,
+                'translations' => [
+                    'fa' => [
+                        'label' => 'رنگ ثانویه',
+                        'value' => '#A0A0A0',
+                        'description' => 'رنگ ثانویه سایت',
+                        'help_text' => 'رنگ ثانویه سایت را انتخاب کنید',
+                        'is_active' => true,
+                    ],
+                    'en' => [
+                        'label' => 'Secondary Color',
+                        'value' => '#A0A0A0',
+                        'description' => 'Secondary site color',
+                        'help_text' => 'Select the secondary site color',
+                        'is_active' => true,
+                    ],
+                    'ar' => [
+                        'label' => 'اللون الثانوي',
+                        'value' => '#A0A0A0',
+                        'description' => 'اللون الثانوي للموقع',
+                        'help_text' => 'اختر اللون الثانوي للموقع',
                         'is_active' => true,
                     ],
                 ],
@@ -344,28 +375,28 @@ class SettingSeeder extends Seeder
                 'key' => 'site_author',
                 'group' => 'general',
                 'type' => 'text',
-                'default_value' => 'هانا کار',
+                'default_value' => 'هانا لاکچری',
                 'sort_order' => 11,
                 'is_active' => true,
                 'is_public' => true,
                 'translations' => [
                     'fa' => [
                         'label' => 'نویسنده',
-                        'value' => 'هانا کار',
+                        'value' => 'هانا لاکچری',
                         'description' => 'نویسنده اصلی سایت',
                         'help_text' => 'نویسنده اصلی سایت را وارد کنید',
                         'is_active' => true,
                     ],
                     'en' => [
                         'label' => 'Author',
-                        'value' => 'Hannah Car',
+                        'value' => 'Hannah Luxury',
                         'description' => 'Main site author',
                         'help_text' => 'Enter the main site author',
                         'is_active' => true,
                     ],
                     'ar' => [
                         'label' => 'المؤلف',
-                        'value' => 'هانا كار',
+                        'value' => 'هانا لاکچری',
                         'description' => 'المؤلف الرئيسي للموقع',
                         'help_text' => 'أدخل المؤلف الرئيسي للموقع',
                         'is_active' => true,
@@ -376,30 +407,62 @@ class SettingSeeder extends Seeder
                 'key' => 'site_logo',
                 'group' => 'general',
                 'type' => 'image',
-                'default_value' => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                'default_value' => '/uploads/2025/07/1753040536_LOGO-HANNAH-trp.png',
                 'sort_order' => 12,
                 'is_active' => true,
                 'is_public' => true,
                 'translations' => [
                     'fa' => [
                         'label' => 'لوگو سایت',
-                        'value' => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                        'value' => '/uploads/2025/07/1753040536_LOGO-HANNAH-trp.png',
                         'description' => 'لوگو سایت',
                         'help_text' => 'لوگو سایت را انتخاب کنید',
                         'is_active' => true,
                     ],
                     'en' => [
                         'label' => 'Site Logo',
-                        'value' => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                        'value' => '/uploads/2025/07/1753040536_LOGO-HANNAH-trp.png',
                         'description' => 'Main site logo',
                         'help_text' => 'Select the main site logo',
                         'is_active' => true,
                     ],
                     'ar' => [
                         'label' => 'شعار الموقع',
-                        'value' => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                        'value' => '/uploads/2025/07/1753040536_LOGO-HANNAH-trp.png',
                         'description' => 'شعار الموقع',
                         'help_text' => 'اختر شعار الموقع',
+                        'is_active' => true,
+                    ],
+                ],
+            ],
+            [
+                'key' => 'site_favicon',
+                'group' => 'general',
+                'type' => 'image',
+                'default_value' => '/uploads/2025/08/1754555802_fav-1.png',
+                'sort_order' => 13,
+                'is_active' => true,
+                'is_public' => true,
+                'translations' => [
+                    'fa' => [
+                        'label' => 'آیکون سایت',
+                        'value' => '/uploads/2025/08/1754555802_fav-1.png',
+                        'description' => 'آیکون سایت',
+                        'help_text' => 'آیکون سایت را انتخاب کنید',
+                        'is_active' => true,
+                    ],
+                    'en' => [
+                        'label' => 'Site Favicon',
+                        'value' => '/uploads/2025/08/1754555802_fav-1.png',
+                        'description' => 'Site favicon',
+                        'help_text' => 'Select the site favicon',
+                        'is_active' => true,
+                    ],
+                    'ar' => [
+                        'label' => 'آیکون الموقع',
+                        'value' => '/uploads/2025/08/1754555802_fav-1.png',
+                        'description' => 'آیکون الموقع',
+                        'help_text' => 'اختر آیکون الموقع',
                         'is_active' => true,
                     ],
                 ],
@@ -477,7 +540,7 @@ class SettingSeeder extends Seeder
             // Check if setting already exists
             $setting = Setting::where('key', $settingData['key'])->first();
 
-            if (!$setting) {
+            if (! $setting) {
                 $setting = Setting::create($settingData);
 
                 foreach ($languages as $language) {

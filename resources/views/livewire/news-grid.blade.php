@@ -9,13 +9,13 @@
 
             <!-- Tab Navigation (Left side in RTL) -->
             <div class="flex justify-center md:justify-start">
-                <div class="bg-gray-100 rounded-lg p-1">
+                <div class="pill-group">
                     <button wire:click="setActiveTab('news')"
-                            class="px-6 py-2 rounded-md transition-all duration-200 {{ $activeTab === 'news' ? 'bg-primary text-white shadow-md' : 'text-gray-600 hover:text-gray-800' }}">
+                            class="pill {{ $activeTab === 'news' ? 'pill--active' : '' }}">
                         {{ __('News') }}
                     </button>
                     <button wire:click="setActiveTab('articles')"
-                            class="px-6 py-2 rounded-md transition-all duration-200 {{ $activeTab === 'articles' ? 'bg-primary text-white shadow-md' : 'text-gray-600 hover:text-gray-800' }}">
+                            class="pill {{ $activeTab === 'articles' ? 'pill--active' : '' }}">
                         {{ __('Articles') }}
                     </button>
                 </div>

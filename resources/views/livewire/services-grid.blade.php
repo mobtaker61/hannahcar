@@ -10,8 +10,8 @@
                 <div class="group cursor-pointer transform transition-all duration-300 hover:-translate-y-2"
                      onclick="window.location.href='{{ $service['link'] }}'">
 
-                    <!-- Service Card -->
-                    <div class="relative h-96 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- Service Card (Figma-like) -->
+                    <div class="relative h-96 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
 
                         <!-- Background Image -->
                         <img src="{{ $service['image'] }}"
@@ -19,21 +19,17 @@
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
                         <!-- Gradient Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
 
-                        <!-- Icon Badge -->
-                        <div class="absolute {{ app()->getLocale() === 'fa' ? 'top-4 right-4' : 'top-4 left-4' }}">
-                            <div class="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:bg-accent transition-all duration-300">
-                                <i class="{{ $service['icon'] }} text-primary text-xl group-hover:text-white transition-colors duration-300"></i>
-                            </div>
-                        </div>
-
-                        <!-- Service Title Overlay -->
-                        <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <div class="bg-white/0 group-hover:bg-white/95 transition-all duration-300 rounded-t-xl p-4 -mt-2">
-                                <h3 class="text-lg font-bold text-white group-hover:text-primary transition-all duration-300 text-center">
-                                    {{ $service['title'] }}
-                                </h3>
+                        <!-- Icon Badge + Glass Title block -->
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <div class="bg-white/90 backdrop-blur-xl rounded-xl p-4 shadow-md ring-1 ring-white/60">
+                                <div class="flex items-center {{ app()->getLocale() === 'fa' ? 'flex-row-reverse' : '' }} gap-3">
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-extrabold text-[#1F4E79]">{{ $service['title'] }}</h3>
+                                        <p class="text-sm text-gray-700 line-clamp-2">{{ $service['description'] ?? '' }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -45,9 +41,9 @@
         </div>
 
         <!-- CTA Section -->
-        <div class="text-center mt-12">
+        <div class="text-center mt-6">
             <a href="{{ route('services.index') }}"
-                class="inline-flex items-center bg-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-105">
+                class="inline-flex items-center text-primary px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-105">
                 {{ __('View All Services') }}
                 <i class="fas fa-arrow-{{ app()->getLocale() === 'fa' ? 'left' : 'right' }} {{ app()->getLocale() === 'fa' ? 'mr-2' : 'ml-2' }}"></i>
             </a>

@@ -226,7 +226,7 @@
                 <!-- Right Side -->
                 <div class="flex items-center space-x-6">
                     <!-- Language Switcher -->
-                    <div class="relative" style="margin: 0 10px;">
+                    <div class="relative hidden" style="margin: 0 10px;">
                         <button onclick="toggleLanguageMenu()"
                             class="text-gray-700 hover:text-primary focus:outline-none">
                             <i class="fas fa-globe"></i>
@@ -243,7 +243,7 @@
                     </div>
 
                     <!-- Search -->
-                    <div class="relative">
+                    <div class="relative hidden">
                         <input type="text" placeholder="{{ __('Search') }}"
                             class="search-input w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
                         <div class="search-icon absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -380,6 +380,32 @@
             window.addEventListener('load', onScroll);
         })();
     </script>
+    <script>
+        // Crossfade gold image over blue image.
+        // Starts when the trigger element's top reaches the middle of the viewport.
+        (function(){
+            const container = document.getElementById('inquiryImageContainer') || document.getElementById('inquirySection');
+            const goldImage = document.getElementById('inquiryGoldImage');
+            if(!container || !goldImage) return;
+
+            const maxFadeDistance = 350; // pixels from trigger to reach full gold
+
+            const updateOpacity = () => {
+                const rect = container.getBoundingClientRect();
+                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+                const trigger = viewportHeight * 0.5; // middle of screen
+                const distance = trigger - rect.top; // positive after top passes middle
+                const progress = Math.min(Math.max(distance / maxFadeDistance, 0), 1);
+                goldImage.style.opacity = String(progress);
+            };
+
+            document.addEventListener('scroll', updateOpacity, { passive: true });
+            window.addEventListener('resize', updateOpacity);
+            window.addEventListener('load', updateOpacity);
+        })();
+    </script>
+    <script>
         function toggleLanguageMenu() {
             const menu = document.getElementById('languageMenu');
             menu.classList.toggle('hidden');

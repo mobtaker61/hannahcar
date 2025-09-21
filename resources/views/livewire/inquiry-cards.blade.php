@@ -19,4 +19,13 @@
             </div>
         </a>
     @endforeach
+    <!-- View All link placed at the end of the cards -->
+    <div class="pt-2 text-end">
+        <a href="{{ route('inquiry-forms.index') }}" class="inline-flex items-center text-primary hover:text-primary/90 font-semibold">
+            {{ __('مشاهده همه استعلامات') }}
+            <i class="fas fa-arrow-{{ app()->getLocale() === 'fa' ? 'left' : 'right' }} {{ app()->getLocale() === 'fa' ? 'mr-2' : 'ml-2' }}"></i>
+        </a>
+    </div>
 </div>
+
+
