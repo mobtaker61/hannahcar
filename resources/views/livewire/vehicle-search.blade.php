@@ -271,68 +271,97 @@
     <div class="relative vehicle-slider"
          x-data="{
              currentIndex: 0,
-             maxScrollWidth: 0,
+             maxIndex: 0,
 
              init() {
                  this.$nextTick(() => {
-                     this.updateMaxScrollWidth();
-                     console.log('Carousel initialized');
+                     this.refresh();
+                     if (this.$refs.carousel) {
+                         new ResizeObserver(() => this.refresh()).observe(this.$refs.carousel);
+                     }
                  });
              },
 
-             movePrev() {
-                 if (this.currentIndex > 0) {
-                     this.currentIndex--;
-                     this.scrollToIndex();
+             get cards() {
+                 return this.$refs.carousel?.querySelectorAll('.vehicle-card') ?? [];
+             },
+
+             get step() {
+                 const card = this.cards[0];
+                 const carousel = this.$refs.carousel;
+                 if (!card || !carousel) {
+                     return 0;
                  }
+                 const gap = parseFloat(getComputedStyle(carousel).gap) || 24;
+                 return card.offsetWidth + gap;
+             },
+
+             refresh() {
+                 const carousel = this.$refs.carousel;
+                 const count = this.cards.length;
+                 if (!carousel || count === 0 || this.step <= 0) {
+                     this.maxIndex = 0;
+                     return;
+                 }
+                 const visible = Math.max(1, Math.floor((carousel.clientWidth + (parseFloat(getComputedStyle(carousel).gap) || 24)) / this.step));
+                 this.maxIndex = Math.max(0, count - visible);
+                 if (this.currentIndex > this.maxIndex) {
+                     this.currentIndex = this.maxIndex;
+                 }
+             },
+
+             movePrev() {
+                 if (this.isDisabled('prev')) {
+                     return;
+                 }
+                 this.currentIndex--;
+                 this.scrollToIndex();
              },
 
              moveNext() {
-                 if (this.currentIndex < this.maxScrollWidth) {
-                     this.currentIndex++;
-                     this.scrollToIndex();
+                 if (this.isDisabled('next')) {
+                     return;
                  }
+                 this.currentIndex++;
+                 this.scrollToIndex();
              },
 
              scrollToIndex() {
-                 const carousel = this.$refs.carousel;
-                 if (carousel) {
-                     const itemWidth = carousel.offsetWidth / 4; // 4 items visible at once
-                     carousel.scrollLeft = itemWidth * this.currentIndex;
+                 const card = this.cards[this.currentIndex];
+                 if (!card) {
+                     return;
                  }
+                 card.scrollIntoView({
+                     behavior: 'smooth',
+                     inline: 'start',
+                     block: 'nearest',
+                 });
              },
 
-             updateMaxScrollWidth() {
-                 const carousel = this.$refs.carousel;
-                 if (carousel) {
-                     this.maxScrollWidth = Math.max(0, carousel.scrollWidth - carousel.offsetWidth);
-                     console.log('Max scroll width:', this.maxScrollWidth);
-                 }
+             goToIndex(index) {
+                 this.currentIndex = index;
+                 this.scrollToIndex();
              },
 
              isDisabled(direction) {
                  if (direction === 'prev') {
                      return this.currentIndex <= 0;
                  }
-                 if (direction === 'next') {
-                     return this.currentIndex >= Math.ceil(this.maxScrollWidth / (this.$refs.carousel?.offsetWidth / 4));
-                 }
-                 return false;
-             }
+                 return this.currentIndex >= this.maxIndex;
+             },
          }"
-         wire:ignore
          wire:key="vehicle-slider-{{ $activeTab }}-{{ count($vehicles) }}">
 
         <div class="relative overflow-hidden">
             <!-- Navigation Arrows -->
-            @if(count($vehicles) > 4)
-                <button @click="movePrev()"
+            @if(count($vehicles) > 1)
+                <button type="button" @click="movePrev()"
                         :disabled="isDisabled('prev')"
                         class="slider-nav-btn {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'right-4' : 'left-4' }} disabled:opacity-25 disabled:cursor-not-allowed">
                     <i class="fas fa-chevron-{{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'right' : 'left' }}"></i>
                 </button>
 
-                <button @click="moveNext()"
+                <button type="button" @click="moveNext()"
                         :disabled="isDisabled('next')"
                         class="slider-nav-btn {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'left-4' : 'right-4' }} disabled:opacity-25 disabled:cursor-not-allowed">
                     <i class="fas fa-chevron-{{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'left' : 'right' }}"></i>
@@ -371,10 +400,10 @@
         </div>
 
         <!-- Dots Indicator -->
-        @if(count($vehicles) > 4)
-            <div class="slider-dots {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse space-x-2' : 'space-x-2' }}" id="dotsContainer">
-                @for($i = 0; $i < ceil(count($vehicles) / 4); $i++)
-                    <button @click="currentIndex = {{ $i }}; scrollToIndex()"
+        @if(count($vehicles) > 1)
+            <div class="slider-dots {{ in_array(app()->getLocale(), ['fa', 'ar']) ? 'space-x-reverse space-x-2' : 'space-x-2' }}">
+                @for($i = 0; $i < max(1, (int) ceil(count($vehicles) / 4)); $i++)
+                    <button type="button" @click="goToIndex({{ $i }})"
                             class="slider-dot"
                             :class="currentIndex === {{ $i }} ? 'active' : 'inactive'">
                     </button>
@@ -382,65 +411,6 @@
             </div>
         @endif
     </div>
-
-    <!-- JavaScript for Multi Image Carousel -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Wait for Alpine.js to be ready
-            setTimeout(function() {
-                const carousel = document.querySelector('[x-ref="carousel"]');
-                if (carousel) {
-                    // Add touch/swipe support for mobile
-                    let startX = 0;
-                    let endX = 0;
-
-                    carousel.addEventListener('touchstart', function(e) {
-                        startX = e.touches[0].clientX;
-                    });
-
-                    carousel.addEventListener('touchend', function(e) {
-                        endX = e.changedTouches[0].clientX;
-                        handleSwipe();
-                    });
-
-                    function handleSwipe() {
-                        const swipeThreshold = 50;
-                        const diff = startX - endX;
-
-                        if (Math.abs(diff) > swipeThreshold) {
-                            if (diff > 0) {
-                                // Swipe left - next slide
-                                const nextBtn = document.querySelector('[x-on\\:click="moveNext()"]');
-                                if (nextBtn && !nextBtn.disabled) nextBtn.click();
-                            } else {
-                                // Swipe right - previous slide
-                                const prevBtn = document.querySelector('[x-on\\:click="movePrev()"]');
-                                if (prevBtn && !prevBtn.disabled) prevBtn.click();
-                            }
-                        }
-                    }
-
-                    // Add keyboard navigation
-                    document.addEventListener('keydown', function(e) {
-                        if (e.key === 'ArrowLeft') {
-                            const prevBtn = document.querySelector('[x-on\\:click="movePrev()"]');
-                            if (prevBtn && !prevBtn.disabled) prevBtn.click();
-                        } else if (e.key === 'ArrowRight') {
-                            const nextBtn = document.querySelector('[x-on\\:click="moveNext()"]');
-                            if (nextBtn && !nextBtn.disabled) nextBtn.click();
-                        }
-                    });
-
-                    // Debug: Log carousel state
-                    console.log('Multi Image Carousel initialized successfully');
-                    console.log('Carousel container:', carousel);
-                    console.log('Vehicle cards:', carousel.querySelectorAll('.vehicle-card').length);
-                    console.log('Carousel width:', carousel.offsetWidth);
-                    console.log('Scroll width:', carousel.scrollWidth);
-                }
-            }, 100);
-        });
-    </script>
 
     <!-- Load More Button -->
     <div class="text-center mt-8">
