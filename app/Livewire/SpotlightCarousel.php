@@ -2,14 +2,17 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Models\Vehicle;
+use Livewire\Component;
 
 class SpotlightCarousel extends Component
 {
     public $currentSlide = 0;
+
     public $autoPlay = true;
+
     public $autoPlayInterval = 3000; // 3 seconds
+
     public $spotlightVehicles = [];
 
     public function mount()
@@ -39,7 +42,7 @@ class SpotlightCarousel extends Component
                 'original_price' => $vehicle->price * 1.15, // 15% markup for original price
                 'badge' => $this->getBadgeText($vehicle),
                 'badge_color' => $this->getBadgeColor($vehicle),
-                'image' => $vehicle->featured_image ? asset('storage/' . $vehicle->featured_image) : 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'image' => media_url($vehicle->featured_image) ?? 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
                 'description' => $vehicle->description ?: 'خودروی لوکس با امکانات کامل و قیمت استثنایی',
                 'slug' => $vehicle->slug,
             ];

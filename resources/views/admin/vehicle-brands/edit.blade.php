@@ -46,7 +46,7 @@
                             @if($vehicleBrand->logo)
                                 <div class="mt-2">
                                     <p class="text-sm text-gray-600">{{ __('Current logo:') }}</p>
-                                    <img src="{{ Storage::url($vehicleBrand->logo) }}" alt="{{ $vehicleBrand->name }}" class="w-20 h-20 object-contain mt-1">
+                                    <img src="{{ media_url($vehicleBrand->logo) }}" alt="{{ $vehicleBrand->name }}" class="w-20 h-20 object-contain mt-1">
                                 </div>
                             @endif
                             <x-input-error :messages="$errors->get('logo')" class="mt-2" />

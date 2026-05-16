@@ -53,7 +53,7 @@
                             <div class="relative overflow-hidden">
                                 <a href="{{ route('vehicles.show', $vehicle) }}" class="block">
                                     @if ($vehicle->featured_image)
-                                        <img src="{{ Storage::url($vehicle->featured_image) }}"
+                                        <img src="{{ media_url($vehicle->featured_image) }}"
                                             alt="{{ $vehicle->full_name }}"
                                             class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700"
                                             loading="lazy">
@@ -145,7 +145,7 @@
                                     @if ($vehicle->brand && $vehicle->brand->logo)
                                         <div
                                             class="w-8 h-8 rounded-full bg-gray-50 p-1 flex items-center justify-center">
-                                            <img src="{{ Storage::url($vehicle->brand->logo) }}"
+                                            <img src="{{ media_url($vehicle->brand->logo) }}"
                                                 alt="{{ $vehicle->brand->name }}" class="w-6 h-6 object-contain">
                                         </div>
                                     @else

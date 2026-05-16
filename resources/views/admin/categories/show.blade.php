@@ -94,7 +94,7 @@
                                                     <div class="mt-4">
                                                         <label class="block text-sm font-medium text-gray-700 mb-2">تصویر شاخص</label>
                                                         <div class="text-sm text-gray-900">
-                                                            <img src="{{ asset('storage/' . $translation->featured_image) }}"
+                                                            <img src="{{ media_url($translation->featured_image) }}"
                                                                  alt="{{ $translation->name }}"
                                                                  class="w-32 h-32 object-cover rounded">
                                                         </div>

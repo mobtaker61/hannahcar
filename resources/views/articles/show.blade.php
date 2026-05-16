@@ -91,7 +91,7 @@
                                                         onclick="openLightbox({{ $index }})">
                                                         <div
                                                             class="w-24 h-16 md:w-32 md:h-20 lg:w-36 lg:h-24 bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
-                                                            <img src="{{ asset('storage/' . $galleryImage->image_path) }}"
+                                                            <img src="{{ media_url($galleryImage->image_path) }}"
                                                                 alt="{{ $galleryImage->alt_text }}"
                                                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                                         </div>
@@ -306,7 +306,7 @@
                             <!-- Featured Image -->
                             @if ($article->featured_image)
                                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm mb-6 overflow-hidden">
-                                    <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                    <img src="{{ media_url($article->featured_image) }}"
                                         class="w-full h-48 object-cover" alt="{{ $article->title }}">
                                 </div>
                             @endif
@@ -322,7 +322,7 @@
                                             @foreach ($relatedArticles as $relatedArticle)
                                                 <div class="flex space-x-3 space-x-reverse">
                                                     @if ($relatedArticle->featured_image)
-                                                        <img src="{{ asset('storage/' . $relatedArticle->featured_image) }}"
+                                                        <img src="{{ media_url($relatedArticle->featured_image) }}"
                                                             class="w-16 h-16 object-cover rounded"
                                                             alt="{{ $relatedArticle->title }}">
                                                     @endif
@@ -355,7 +355,7 @@
                                             @foreach ($popularArticles as $popularArticle)
                                                 <div class="flex space-x-3 space-x-reverse">
                                                     @if ($popularArticle->featured_image)
-                                                        <img src="{{ asset('storage/' . $popularArticle->featured_image) }}"
+                                                        <img src="{{ media_url($popularArticle->featured_image) }}"
                                                             class="w-16 h-16 object-cover rounded"
                                                             alt="{{ $popularArticle->title }}">
                                                     @endif
@@ -478,7 +478,7 @@
         const galleryImages = [
             @foreach($article->gallery->sortBy('sort_order') as $image)
             {
-                src: '{{ asset('storage/' . $image->image_path) }}',
+                src: '{{ media_url($image->image_path) }}',
                 alt: '{{ $image->alt_text }}',
                 caption: '{{ $image->caption }}'
             }@if(!$loop->last),@endif

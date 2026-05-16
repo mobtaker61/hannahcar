@@ -35,7 +35,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
                         @if($article->featured_image)
-                            <img src="{{ asset('storage/' . $article->featured_image) }}"
+                            <img src="{{ media_url($article->featured_image) }}"
                                  class="card-img-top" alt="{{ $article->title }}"
                                  style="height: 200px; object-fit: cover;">
                         @endif

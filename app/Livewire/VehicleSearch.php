@@ -2,23 +2,31 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Livewire\Attributes\On;
 use App\Models\Vehicle;
 use App\Models\VehicleBrand;
 use App\Models\VehicleModel;
 use App\Models\VehicleVariant;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class VehicleSearch extends Component
 {
     public $searchQuery = '';
+
     public $activeTab = 'all'; // تغییر از 'new' به 'all'
+
     public $vehicles = [];
+
     public $selectedBrand = '';
+
     public $selectedModel = '';
+
     public $selectedVariant = '';
+
     public $brands = [];
+
     public $models = [];
+
     public $vehicleVariants = [];
 
     public function mount()
@@ -127,11 +135,11 @@ class VehicleSearch extends Component
                 $q->whereHas('brand', function ($q) {
                     $q->where('name', 'like', "%{$this->searchQuery}%");
                 })
-                ->orWhereHas('model', function ($q) {
-                    $q->where('name', 'like', "%{$this->searchQuery}%");
-                })
-                ->orWhere('year', 'like', "%{$this->searchQuery}%")
-                ->orWhere('description', 'like', "%{$this->searchQuery}%");
+                    ->orWhereHas('model', function ($q) {
+                        $q->where('name', 'like', "%{$this->searchQuery}%");
+                    })
+                    ->orWhere('year', 'like', "%{$this->searchQuery}%")
+                    ->orWhere('description', 'like', "%{$this->searchQuery}%");
             });
         }
 
@@ -146,7 +154,7 @@ class VehicleSearch extends Component
                 'currency' => $vehicle->currency,
                 'year' => $vehicle->year,
                 'km' => $vehicle->formatted_mileage,
-                'image' => $vehicle->featured_image ? asset('storage/' . $vehicle->featured_image) : 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+                'image' => media_url($vehicle->featured_image) ?? 'https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
                 'brand' => $vehicle->brand->name ?? '',
                 'model' => $vehicle->model->name ?? '',
                 'slug' => $vehicle->slug,

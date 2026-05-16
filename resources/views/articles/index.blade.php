@@ -61,7 +61,7 @@
                                         <div class="flex-1 group relative rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                             <a href="{{ route('news.show', $article->slug) }}" class="block relative h-48">
                                                 @if($article->featured_image)
-                                                    <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                    <img src="{{ media_url($article->featured_image) }}"
                                                          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                                          alt="{{ $article->title }}">
                                                 @else
@@ -131,7 +131,7 @@
                                             <div class="md:flex">
                                                 @if($article->featured_image)
                                                     <div class="md:w-1/3">
-                                                        <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                        <img src="{{ media_url($article->featured_image) }}"
                                                              class="w-full h-48 md:h-full object-cover" alt="{{ $article->title }}">
                                                     </div>
                                                 @endif
@@ -225,7 +225,7 @@
                                             @foreach($featuredArticles->take(3) as $article)
                                                 <div class="flex space-x-3 space-x-reverse">
                                                     @if($article->featured_image)
-                                                        <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                        <img src="{{ media_url($article->featured_image) }}"
                                                              class="w-16 h-16 object-cover rounded" alt="{{ $article->title }}">
                                                     @endif
                                                     <div class="flex-1 min-w-0">

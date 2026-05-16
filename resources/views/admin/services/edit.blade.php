@@ -101,7 +101,7 @@
                                         </label>
                                         @if($article->featured_image)
                                             <div class="mb-3">
-                                                <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                <img src="{{ media_url($article->featured_image) }}"
                                                      alt="تصویر فعلی"
                                                      class="w-32 h-32 object-cover rounded-lg border">
                                                 <p class="text-xs text-gray-500 mt-1">تصویر فعلی</p>

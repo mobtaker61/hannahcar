@@ -44,7 +44,7 @@
                                 @endphp
 
                                 @if($siteLogo)
-                                    <img src="{{ asset($siteLogo) }}" alt="{{ $siteName }}" class="h-8 w-auto me-2">
+                                    <img src="{{ \App\Helpers\SettingHelper::mediaUrl($siteLogo) }}" alt="{{ $siteName }}" class="h-8 w-auto me-2">
                                 @else
                                     <span class="text-xl font-bold text-gray-800">{{ $siteName }} - ادمین</span>
                                 @endif

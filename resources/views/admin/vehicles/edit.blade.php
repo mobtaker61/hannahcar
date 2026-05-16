@@ -29,7 +29,7 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
                                 @if ($vehicle->featured_image)
-                                    <img src="{{ Storage::url($vehicle->featured_image) }}"
+                                    <img src="{{ media_url($vehicle->featured_image) }}"
                                         alt="{{ $vehicle->full_name }}" class="w-16 h-16 object-cover rounded-lg">
                                 @else
                                     <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -526,7 +526,7 @@
                                 @if ($vehicle->featured_image)
                                     <div class="mt-2 mb-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                                         <div class="flex items-center space-x-4">
-                                            <img src="{{ Storage::url($vehicle->featured_image) }}"
+                                            <img src="{{ media_url($vehicle->featured_image) }}"
                                                 alt="Current featured image"
                                                 class="w-32 h-32 object-cover rounded-lg shadow-sm">
                                             <div class="flex-1">
@@ -537,7 +537,7 @@
                                                         class="bg-red-500 hover:bg-red-700 text-white text-xs px-3 py-1 rounded">
                                                         {{ __('Remove') }}
                                                     </button>
-                                                    <a href="{{ Storage::url($vehicle->featured_image) }}"
+                                                    <a href="{{ media_url($vehicle->featured_image) }}"
                                                         target="_blank"
                                                         class="bg-blue-500 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded">
                                                         {{ __('View Full Size') }}
@@ -567,7 +567,7 @@
                                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             @foreach ($vehicle->gallery as $index => $image)
                                                 <div class="relative group">
-                                                    <img src="{{ Storage::url($image->image_path) }}"
+                                                    <img src="{{ media_url($image->image_path) }}"
                                                         alt="Gallery image {{ $index + 1 }}"
                                                         class="w-full h-24 object-cover rounded-lg shadow-sm">
                                                     <div
@@ -578,7 +578,7 @@
                                                                 class="bg-red-500 hover:bg-red-700 text-white text-xs px-2 py-1 rounded">
                                                                 {{ __('Remove') }}
                                                             </button>
-                                                            <a href="{{ Storage::url($image->image_path) }}"
+                                                            <a href="{{ media_url($image->image_path) }}"
                                                                 target="_blank"
                                                                 class="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
                                                                 {{ __('View') }}

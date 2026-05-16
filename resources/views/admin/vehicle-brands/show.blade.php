@@ -22,7 +22,7 @@
                     <!-- Brand Logo -->
                     <div class="mb-6">
                         @if($vehicleBrand->logo)
-                            <img src="{{ Storage::url($vehicleBrand->logo) }}" alt="{{ $vehicleBrand->name }}"
+                            <img src="{{ media_url($vehicleBrand->logo) }}" alt="{{ $vehicleBrand->name }}"
                                  class="w-32 h-32 object-contain rounded-lg">
                         @else
                             <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center">

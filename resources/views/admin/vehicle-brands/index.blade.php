@@ -38,7 +38,7 @@
                                         <div class="flex items-center">
                                             @if($brand->logo)
                                                 <div class="flex-shrink-0 h-10 w-10">
-                                                    <img class="h-10 w-10 rounded-lg object-cover" src="{{ Storage::url($brand->logo) }}" alt="{{ $brand->name }}">
+                                                    <img class="h-10 w-10 rounded-lg object-cover" src="{{ media_url($brand->logo) }}" alt="{{ $brand->name }}">
                                                 </div>
                                             @else
                                                 <div class="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-lg flex items-center justify-center">

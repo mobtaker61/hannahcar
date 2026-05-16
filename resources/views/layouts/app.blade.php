@@ -147,7 +147,7 @@
                             @endphp
 
                             @if($logoUrl)
-                                <img src="{{ asset($logoUrl) }}"
+                                <img src="{{ \App\Helpers\SettingHelper::mediaUrl($logoUrl) }}"
                                     alt="{{ $nameTranslation?->value ?? config('app.name') }}" class="h-8 w-auto me-2">
                             @else
                                 <span class="text-primary text-xl font-bold">{{ $nameTranslation?->value ?? config('app.name') }}</span>

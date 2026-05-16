@@ -45,7 +45,7 @@
 
                                 <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
                                     <div class="relative h-48 overflow-hidden">
-                                        <img src="{{ $service->featured_image ? asset('storage/' . $service->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $translation->title }}"
+                                        <img src="{{ $service->featured_image ? media_url($service->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $translation->title }}"
                                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                         @if($service->is_featured)

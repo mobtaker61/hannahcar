@@ -14,7 +14,7 @@
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
                             @if($vehicle->brand && $vehicle->brand->logo)
-                                <img src="{{ Storage::url($vehicle->brand->logo) }}" alt="{{ $vehicle->brand->name }}" class="w-12 h-12 object-contain bg-white/10 rounded-lg p-2">
+                                <img src="{{ media_url($vehicle->brand->logo) }}" alt="{{ $vehicle->brand->name }}" class="w-12 h-12 object-contain bg-white/10 rounded-lg p-2">
                             @endif
                             <div>
                                 <p class="text-xl text-gray-300 mt-2">
@@ -77,7 +77,7 @@
                 <div class="relative">
                     @if($vehicle->featured_image)
                         <div class="relative overflow-hidden rounded-2xl shadow-2xl">
-                            <img src="{{ Storage::url($vehicle->featured_image) }}"
+                            <img src="{{ media_url($vehicle->featured_image) }}"
                                  alt="{{ $vehicle->full_name }}"
                                  class="w-full h-80 lg:h-96 object-cover transform hover:scale-105 transition-transform duration-700">
 
@@ -299,14 +299,14 @@
                                     @foreach ($vehicle->gallery as $index => $image)
                                         <div class="carousel-item {{ $index === 0 ? 'active' : 'hidden' }}"
                                             data-index="{{ $index }}">
-                                            <img src="{{ Storage::url($image->image_path) }}"
+                                            <img src="{{ media_url($image->image_path) }}"
                                                 alt="Gallery image {{ $index + 1 }}"
                                                 class="w-full h-96 lg:h-[500px] object-cover">
                                         </div>
                                     @endforeach
                                 @elseif($vehicle->featured_image)
                                     <div class="carousel-item active">
-                                        <img src="{{ Storage::url($vehicle->featured_image) }}"
+                                        <img src="{{ media_url($vehicle->featured_image) }}"
                                             alt="{{ $vehicle->full_name }}"
                                             class="w-full h-96 lg:h-[500px] object-cover">
                                     </div>
@@ -399,7 +399,7 @@
                                     @foreach ($vehicle->gallery as $index => $image)
                                         <div class="thumbnail-item flex-shrink-0 cursor-pointer group {{ $index === 0 ? 'ring-2 ring-blue-500 active' : '' }}"
                                             data-index="{{ $index }}">
-                                            <img src="{{ Storage::url($image->image_path) }}"
+                                            <img src="{{ media_url($image->image_path) }}"
                                                 alt="Gallery thumbnail {{ $index + 1 }}"
                                                 class="w-24 h-20 object-cover rounded-lg border-2 border-transparent group-hover:border-blue-500 transition-all duration-200 hover:scale-105">
                                         </div>
@@ -808,7 +808,7 @@
                                     class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
                                     <a href="{{ route('vehicles.show', $relatedVehicle) }}" class="block">
                                         @if ($relatedVehicle->featured_image)
-                                            <img src="{{ Storage::url($relatedVehicle->featured_image) }}"
+                                            <img src="{{ media_url($relatedVehicle->featured_image) }}"
                                                 alt="{{ $relatedVehicle->full_name }}"
                                                 class="w-full h-48 object-cover">
                                         @else

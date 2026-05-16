@@ -2,8 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Models\Setting;
 use App\Models\Language;
+use App\Models\Setting;
 
 class SettingHelper
 {
@@ -14,7 +14,7 @@ class SettingHelper
     {
         $setting = Setting::where('key', $key)->first();
 
-        if (!$setting) {
+        if (! $setting) {
             return $default;
         }
 
@@ -22,18 +22,18 @@ class SettingHelper
         $currentLocale = app()->getLocale();
         $currentLanguage = Language::where('code', $currentLocale)->first();
 
-        if (!$currentLanguage) {
+        if (! $currentLanguage) {
             $currentLanguage = Language::where('is_default', true)->first();
         }
 
-        if (!$currentLanguage) {
+        if (! $currentLanguage) {
             $currentLanguage = Language::first();
         }
 
         // Get translation
         $translation = $setting->translations->where('language_id', $currentLanguage->id)->first();
 
-        if (!$translation) {
+        if (! $translation) {
             $translation = $setting->translations->first();
         }
 
@@ -47,7 +47,7 @@ class SettingHelper
     {
         $setting = Setting::where('key', $key)->first();
 
-        if (!$setting) {
+        if (! $setting) {
             $setting = Setting::create([
                 'key' => $key,
                 'type' => 'text',
@@ -61,11 +61,11 @@ class SettingHelper
         $currentLocale = app()->getLocale();
         $currentLanguage = Language::where('code', $currentLocale)->first();
 
-        if (!$currentLanguage) {
+        if (! $currentLanguage) {
             $currentLanguage = Language::where('is_default', true)->first();
         }
 
-        if (!$currentLanguage) {
+        if (! $currentLanguage) {
             $currentLanguage = Language::first();
         }
 
@@ -108,32 +108,30 @@ class SettingHelper
     }
 
     /**
+     * @see media_url()
+     */
+    public static function mediaUrl(?string $path): ?string
+    {
+        return media_url($path);
+    }
+
+    /**
      * Get file path from setting (removes domain if present)
      */
     public static function getFilePath($key, $default = null)
     {
         $value = self::get($key, $default);
 
-        if (!$value) {
+        if (! $value) {
             return $default;
         }
 
-        // If it's a full URL, extract the path
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             $parsedUrl = parse_url($value);
-            return $parsedUrl['path'] ?? $value;
+
+            return ltrim($parsedUrl['path'] ?? $value, '/');
         }
 
-        // If it starts with storage/, return as is
-        if (str_starts_with($value, 'storage/')) {
-            return $value;
-        }
-
-        // If it's just a filename, assume it's in storage/uploads/
-        if (!str_contains($value, '/')) {
-            return 'storage/uploads/' . $value;
-        }
-
-        return $value;
+        return ltrim($value, '/');
     }
 }

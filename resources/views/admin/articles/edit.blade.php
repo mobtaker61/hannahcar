@@ -244,7 +244,7 @@
                                                     @foreach($article->gallery as $galleryImage)
                                                         <div class="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" data-gallery-id="{{ $galleryImage->id }}">
                                                             <div class="aspect-square">
-                                                                <img src="{{ asset('storage/' . $galleryImage->image_path) }}"
+                                                                <img src="{{ media_url($galleryImage->image_path) }}"
                                                                      alt="{{ $galleryImage->alt_text }}"
                                                                      class="w-full h-full object-cover">
                                                             </div>
@@ -467,7 +467,7 @@
                                     <div class="p-4">
                                         @if($article->featured_image)
                                             <div class="mb-4">
-                                                <img src="{{ asset('storage/' . $article->featured_image) }}"
+                                                <img src="{{ media_url($article->featured_image) }}"
                                                      alt="تصویر فعلی"
                                                      class="w-full h-32 object-cover rounded-lg border">
                                                 <p class="text-xs text-gray-500 mt-2">تصویر فعلی</p>

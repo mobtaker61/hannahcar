@@ -47,7 +47,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 @if($category->featured_image)
-                                                    <img src="{{ asset('storage/' . $category->featured_image) }}"
+                                                    <img src="{{ media_url($category->featured_image) }}"
                                                          alt="{{ $category->name }}"
                                                          class="w-10 h-10 rounded-full object-cover ml-3">
                                                 @endif

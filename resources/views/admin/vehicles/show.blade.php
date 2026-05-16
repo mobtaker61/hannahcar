@@ -22,7 +22,7 @@
                     <!-- Vehicle Image -->
                     <div class="mb-6">
                         @if($vehicle->featured_image)
-                            <img src="{{ Storage::url($vehicle->featured_image) }}" alt="{{ $vehicle->full_name }}"
+                            <img src="{{ media_url($vehicle->featured_image) }}" alt="{{ $vehicle->full_name }}"
                                  class="w-full h-64 object-cover rounded-lg">
                         @else
                             <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -215,7 +215,7 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Gallery') }}</h3>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             @foreach($vehicle->gallery as $image)
-                                <img src="{{ Storage::url($image->image_path) }}" alt="{{ $image->alt_text ?? 'Gallery image' }}"
+                                <img src="{{ media_url($image->image_path) }}" alt="{{ $image->alt_text ?? 'Gallery image' }}"
                                      class="w-full h-24 object-cover rounded-lg">
                             @endforeach
                         </div>

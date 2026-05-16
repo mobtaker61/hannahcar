@@ -25,7 +25,7 @@
                     <!-- Service Header -->
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
                         <div class="relative h-64 md:h-96">
-                            <img src="{{ $service->featured_image ? asset('storage/' . $service->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $translation->title }}"
+                            <img src="{{ $service->featured_image ? media_url($service->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $translation->title }}"
                                  class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             @if($service->is_featured)
@@ -151,7 +151,7 @@
                                        class="block group">
                                         <div class="flex items-center space-x-3 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }}">
                                             <div class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden">
-                                                <img src="{{ $relatedService->featured_image ? asset('storage/' . $relatedService->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $relatedTranslation->title }}"
+                                                <img src="{{ $relatedService->featured_image ? media_url($relatedService->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $relatedTranslation->title }}"
                                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -186,7 +186,7 @@
                                        class="block group">
                                         <div class="flex items-center space-x-3 {{ app()->getLocale() === 'fa' ? 'space-x-reverse' : '' }}">
                                             <div class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden">
-                                                <img src="{{ $popularService->featured_image ? asset('storage/' . $popularService->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $popularTranslation->title }}"
+                                                <img src="{{ $popularService->featured_image ? media_url($popularService->featured_image) : asset('images/placeholder.jpg') }}" alt="{{ $popularTranslation->title }}"
                                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
                                             </div>
                                             <div class="flex-1 min-w-0">

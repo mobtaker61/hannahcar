@@ -11,7 +11,7 @@
 
                 @if($logoTranslation)
                     <div class="flex items-center justify-start mb-2">
-                        <img src="{{ $logoTranslation }}" alt="{{ $nameTranslation ?? config('app.name') }}" class="h-8 w-auto">
+                        <img src="{{ \App\Helpers\SettingHelper::mediaUrl($logoTranslation) }}" alt="{{ $nameTranslation ?? config('app.name') }}" class="h-8 w-auto">
                     </div>
                 @endif
 
